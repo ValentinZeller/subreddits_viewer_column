@@ -1,0 +1,109 @@
+body {
+    background: rgb(52, 58, 64);
+    overflow-y: hidden;
+}
+
+.no-gutters {
+    margin-right: 0;
+    margin-left: 0;
+}
+  
+.no gutters > .col, .no-gutters > [class*="col-"] {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+html {
+    scrollbar-color: rgb(100, 100, 100) rgb(51, 51, 51) ;
+    scrollbar-width: thin;
+}
+
+.col-3 {
+    height: calc(100vh);
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(100, 100, 100) rgb(51, 51, 51) ;
+}
+
+.col-9 {
+    height: calc(100vh);
+    overflow-y: scroll;
+}
+
+html::-webkit-scrollbar {
+    width: 8px;
+}
+
+html::-webkit-scrollbar-thumb {
+    background-color: rgb(100, 100, 100);
+}
+
+html::-webkit-scrollbar-track {
+    background-color: rgb(51, 51, 51);
+}
+
+.col-3::-webkit-scrollbar {
+    width: 8px;
+}
+
+.col-3::-webkit-scrollbar-thumb {
+    background-color: rgb(100, 100, 100);
+}
+
+.col-3::-webkit-scrollbar-track {
+    background-color: rgb(51, 51, 51);
+}
+
+.card-body {
+    font-size:13px;
+}
+
+.post-thumb {
+    width: 70px;
+    height: 70px;
+    float: left;
+    margin-right: 6px;
+}
+
+
+
+a:hover {
+    color:white;
+    text-decoration: none;
+}
+
+.col-3 > .card > .list-group >.list-group-item:hover {
+    background-color: rgb(72, 80, 88) !important;
+}
+
+.thumb-self {
+    background: url(http://reddit6.com/css/images/thumb_sprite.png) 0 0;
+    width:70px;
+    height:51px;
+    float: left;
+    margin-right: 6px;
+}
+
+.card-body {
+    background-color: rgb(62, 66, 70);
+}
+
+.post-image,.youtube {
+    width: 50%;
+}
+
+.link-to-reddit {
+    margin: 0 10px;
+}
+
+.num-comments {
+    padding-left: 1%;
+}
+
+.btn-dark {
+    background:rgb(45, 50, 55);
+}
+
+.navbar {
+    padding:5px;
+}
