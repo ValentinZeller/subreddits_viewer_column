@@ -3,16 +3,6 @@ body {
     overflow-y: hidden;
 }
 
-.no-gutters {
-    margin-right: 0;
-    margin-left: 0;
-}
-  
-.no gutters > .col, .no-gutters > [class*="col-"] {
-    padding-right: 0;
-    padding-left: 0;
-}
-
 html {
     scrollbar-color: rgb(100, 100, 100) rgb(51, 51, 51) ;
     scrollbar-width: thin;
@@ -96,8 +86,9 @@ a:hover {
     margin: 0 10px;
 }
 
-.num-comments {
-    padding-left: 1%;
+.post-info {
+    padding : 5px;
+    background : rgb(45, 51, 56);
 }
 
 .btn-dark {
@@ -106,4 +97,13 @@ a:hover {
 
 .navbar {
     padding:5px;
+}
+
+.nested {
+    background: rgb(60, 66, 71) !important;
+}
+
+.card-header {
+    padding : 5px;
+    background : rgb(45, 51, 56);
 }

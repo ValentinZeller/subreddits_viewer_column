@@ -31,6 +31,8 @@ function createCard(columnlist) {
 }
 
 function fetchSubreddit(url,card) {
+
+    var options = {methode:'GET',mode:'cors',cache:'default',headers:{"Content-Type": "application/json","Access-Control-Allow-Origin":"https://www.reddit.com"}};
     if (url) {
         fetch('https://www.reddit.com/r/' + url + '.json?limit=100').then(function(response) {
             return response.json();
@@ -45,7 +47,7 @@ function fetchSubreddit(url,card) {
                     links +="<div class='thumb-self'></div>";
                 }
                 links += "<p href='https://www.reddit.com/" + json.data.children[i].data.permalink + "'>" + json.data.children[i].data.title + "</p></li>";
-                links += "<p class='num-comments'>" + json.data.children[i].data.num_comments + " comments</p>";
+                links += postInfo(json.data.children[i].data);
             }
             sub = document.createElement("ul");
             sub.setAttribute("class","list-group list-group-flush");
@@ -79,7 +81,6 @@ function fetchPosts(url,col,id) {
                         post = "<a target='_blank' href='"+og.url+"'><img class='post-image' alt='"+og.url+"' src='"+ og.url +"'/></a>";
                     }
                 }
-                
             }
             else {
                 var post = parseMDtoHTML(og.selftext_html);
@@ -89,27 +90,43 @@ function fetchPosts(url,col,id) {
 
             content = '';
             for (let i = 0;i < json[1].data.children.length-1;i++) {
-                content +=  "<li class='list-group-item bg-dark'><p>"+parseMDtoHTML(json[1].data.children[i].data.body_html);
+                content +=  "<li class='list-group-item bg-dark'>"+ postInfo(json[1].data.children[i].data) +"<p>"+parseMDtoHTML(json[1].data.children[i].data.body_html);
                 if (json[1].data.children[i].data.replies) {
-                    content += fetchComments(json[1].data.children[i].data.replies.data.children);
+                    content += fetchComments(json[1].data.children[i].data.replies.data.children,true);
                 }
-                
                 content+= "</p></li>";
             }
 
             content = "<ul class='list-group list-group-flush'>" + content + "</ul>";
-            col.innerHTML = "<div class='card bg-dark text-white rounded-0'>" + posttitle + "<div class='card-body'>"+ post + "</div>" + "<p class='num-comments'>" +json[0].data.children[0].data.num_comments+" comments </p>" + content +  "</div>";
+            col.innerHTML = "<div class='card bg-dark text-white rounded-0'>" + posttitle + "<div class='card-body'>"+ post + "</div>" + postInfo(json[0].data.children[0].data)  + content +  "</div>";
         });
     }
 }
 
-function fetchComments(json) {
+function postInfo(data) {
+    info = "<p class='post-info'>"+ data.ups + " 🡅  - " + data.author;
+    if (data.num_comments) {
+        info+=" - " +data.num_comments+" comments </p>";
+    }
+    return info;
+}
+
+function fetchComments(json,nest) {
     if (json.length > 0) {
-        var comment = "<li class='list-group-item bg-dark'><p>";
+        var comment = "";
+        if (nest) {
+            comment += "<li class='list-group-item bg-dark nested'>"
+        } else {
+            comment += "<li class='list-group-item bg-dark'>"
+        }
+
+        
         for (let i =0;i < json.length;i++) {
+            comment+=postInfo(json[i].data) +"<p>";
+        let nested = !nest;
             comment += parseMDtoHTML(json[i].data.body_html);
             if (json[i].data.replies) {
-                comment += fetchComments(json[i].data.replies.data.children);
+                comment += fetchComments(json[i].data.replies.data.children,nested);
             }
         }
         comment += "</p></li>";
@@ -153,9 +170,9 @@ function hideSubs(id) {
 function showSubs(id) {
     var row = document.getElementById("row");
     for (i=1;i<row.childElementCount;i++) {
-        row.children[i].style.display = "";
+        row.children[i].style = null;
     }
-    document.getElementById(id).scrollIntoView({inline:"center"});
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
 }
 
 function refresh() {
@@ -168,6 +185,10 @@ function sublist() {
         setCookie("columns",value,365);
         refresh();
     }
+}
+
+function start() {
+    document.getElementById("row").children[1].focus();
 }
 
 function setCookie(cname, cvalue, exdays) {
