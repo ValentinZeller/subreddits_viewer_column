@@ -179,8 +179,8 @@ function refresh() {
     document.location.reload();
 }
 
-function sublist() {
-    var value = window.prompt("Enter the subreddits list seperated by ',' ",getCookie("columns"));
+function manageList() {
+    var value = document.getElementById("sublist").value;
     if (value && value != getCookie("columns")) {
         setCookie("columns",value,365);
         refresh();
