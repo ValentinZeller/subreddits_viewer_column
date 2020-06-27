@@ -32,7 +32,7 @@ function createCard(columnlist) {
 
 function fetchSubreddit(url,card) {
 
-    var options = {methode:'GET',mode:'cors',cache:'default',headers:{"Content-Type": "application/json","Access-Control-Allow-Origin":"https://www.reddit.com"}};
+    var options = {methode:'GET',mode:'cors',cache:'default',headers:{"Content-Type": "application/json","Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers:":"origin,x-requested-with,content-type,Authorization","Access-Control-Allow-Methods":"GET"}};
     if (url) {
         fetch('https://www.reddit.com/r/' + url + '.json?limit=100').then(function(response) {
             return response.json();
