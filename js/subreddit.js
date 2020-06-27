@@ -32,7 +32,7 @@ function createCard(columnlist) {
 
 function fetchSubreddit(url,card) {
     if (url) {
-        fetch('https://www.reddit.com/r/' + url + '.json?limit=100',{credentials:"include",mode:"cors",headers:{'Access-Control-Allow-Origin':'*'}}).then(function(response) {
+        fetch('https://www.reddit.com/r/' + url + '.json?limit=100').then(function(response) {
             return response.json();
         }).then(function(json) {
             var links = '';
