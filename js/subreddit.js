@@ -172,7 +172,6 @@ function showSubs(id) {
     for (i=1;i<row.childElementCount;i++) {
         row.children[i].style = null;
     }
-    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
 }
 
 function refresh() {
@@ -185,10 +184,6 @@ function manageList() {
         setCookie("columns",value,365);
         refresh();
     }
-}
-
-function start() {
-    document.getElementById("row").children[1].focus();
 }
 
 function setCookie(cname, cvalue, exdays) {
