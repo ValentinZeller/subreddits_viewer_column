@@ -172,6 +172,8 @@ function showSubs(id) {
     for (i=1;i<row.childElementCount;i++) {
         row.children[i].style = null;
     }
+
+    document.getElementById(id).scrollIntoView({behavior:"smooth",block:"start",inline:"center"});
 }
 
 function refresh() {
