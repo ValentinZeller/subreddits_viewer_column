@@ -6,6 +6,7 @@ body {
 html {
     scrollbar-color: rgb(100, 100, 100) rgb(51, 51, 51) ;
     scrollbar-width: thin;
+    scroll-behavior: smooth;
 }
 
 .col-3 {
