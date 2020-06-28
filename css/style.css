@@ -14,7 +14,7 @@ html {
 }
 
 .col-3 {
-    height: calc(95vh);
+    height: calc(92vh);
     overflow-y: scroll;
     overflow-x: hidden;
     scrollbar-width: thin;
