@@ -11,6 +11,7 @@ html {
 #row {
     overflow-x:auto;
     overflow-y: hidden;
+    max-height: 92vh;
 }
 
 .col-3 {
