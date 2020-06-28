@@ -172,8 +172,7 @@ function showSubs(id) {
     for (i=1;i<row.childElementCount;i++) {
         row.children[i].style = null;
     }
-
-    document.getElementById(id).scrollIntoView({block:"start",inline:"start"});
+    row.scrollLeft = document.getElementById(id).getBoundingClientRect().left ;
 }
 
 function refresh() {
