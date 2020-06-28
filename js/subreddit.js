@@ -173,7 +173,7 @@ function showSubs(id) {
         row.children[i].style = null;
     }
 
-    document.getElementById(id).scrollIntoView({behavior:"smooth",block:"start",inline:"center"});
+    document.getElementById(id).scrollIntoView({block:"start",inline:"start"});
 }
 
 function refresh() {
