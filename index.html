@@ -18,11 +18,11 @@
       <div class="" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <button class='btn btn-dark' onclick="refresh();">Refresh</button>
+            <button class='btn btn-dark' id="refresh" onclick="refresh();">Refresh</button>
           </li>
           <form class="form-inline my-2 my-lg-0" action="" >
             <input class="form-control mr-sm-2" id="sublist" placeholder="List" value="">
-            <button onclick="manageList();" class="btn btn-outline-success my-2 my-sm-0" type="button">Manage the list</button>
+            <button onclick="manageList();" class="btn btn-outline-success my-2 my-sm-0" id="list" type="button">Manage the list</button>
           </form>
         </ul>
       </div>
@@ -30,7 +30,7 @@
         <div class="row flex-nowrap no-gutters" id="row">
             <script>
               if (getCookie("columns")) {
-                createCard(getCookie("columns"));
+                createColumns(getCookie("columns"));
                 document.getElementById("sublist").value = getCookie("columns");
               }          
             </script>
