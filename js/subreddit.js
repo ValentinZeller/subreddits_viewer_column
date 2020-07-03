@@ -17,6 +17,7 @@ function createColumns(columnlist) {
         cardheader.setAttribute("class","card-header");
         cardheader.innerHTML = element;
 
+
         var cardbody = document.createElement("div");
         cardbody.setAttribute("class","card-body");
         
@@ -25,6 +26,10 @@ function createColumns(columnlist) {
 
         col.appendChild(card);
         row.appendChild(col);
+
+        cardheader.addEventListener("click",function() {
+            backToTop(element);
+        });
     });
 }
 
@@ -160,6 +165,7 @@ function hidePost(id) {
     var row = document.getElementById("row");
     row.removeChild(document.getElementById("post-content"));
     showSubs(id);
+    backToTop(id);
 }
 
 function hideSubs(id) {
@@ -181,6 +187,11 @@ function showSubs(id) {
 
 function refresh() {
     document.location.reload();
+}
+
+function backToTop(id) {
+    var col = document.getElementById(id);
+    col.scrollTop = 0;
 }
 
 function manageList() {

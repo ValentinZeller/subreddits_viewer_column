@@ -142,6 +142,13 @@ a:hover {
 .card-header {
     padding : 5px;
     background : rgb(45, 51, 56);
+    position : sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.card-header:hover {
+    background : rgb(35, 39, 43);
 }
 
 .list-group-flush {
