@@ -103,7 +103,7 @@ a:hover {
 }
 
 .thumb-self {
-    background: url(http://reddit6.com/css/images/thumb_sprite.png) 0 0;
+    background: url(../images/thumb_sprite.png) 0 0;
     width:70px;
     height:51px;
     float: left;

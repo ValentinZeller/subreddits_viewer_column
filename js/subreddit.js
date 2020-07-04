@@ -43,7 +43,12 @@ function fetchSubreddit(url,card) {
                 var childdata = json.data.children[i].data;
                 links += "<li onclick='showPost(\""+ childdata.permalink +"\",\""+ url +"\");' class='list-group-item bg-dark' id='"+ childdata.id +"'>";
                 if (childdata.preview && childdata.selftext == "") {
-                   links+= "<img class='post-thumb' src='" + childdata.thumbnail + "'>";
+                   
+                   if (childdata.thumbnail == "spoiler") {
+                        links +="<div class='thumb-self'></div>";
+                   } else {
+                    links+= "<img class='post-thumb' src='" + childdata.thumbnail + "'>";
+                   }
                 } else {
                     links +="<div class='thumb-self'></div>";
                 }
