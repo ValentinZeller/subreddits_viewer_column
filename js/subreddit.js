@@ -90,7 +90,9 @@ function fetchPosts(url,col,id) {
             posttitle = "<div class='card-header'><button type='button' class='btn btn-dark' onclick='hidePost(\""+ id +"\");'> X </button><a target='_blank' href='"+url+"' class='link-to-reddit' >Reddit</a>" +og.title +"</div>";
 
             content = '';
-            for (let i = 0;i < json[1].data.children.length-1;i++) {
+            console.log(json[1].data.children);
+            for (let i = 0;i < json[1].data.children.length;i++) {
+                console.log(i);
                 var childdata = json[1].data.children[i].data;
                 content +=  "<li class='list-group-item bg-dark'>"+ postInfo(childdata) + parseMDtoHTML(childdata.body_html);
                 if (childdata.replies) {
