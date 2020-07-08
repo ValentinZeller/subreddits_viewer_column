@@ -11,6 +11,7 @@ html {
 #row {
     overflow-x:auto;
     overflow-y: hidden;
+    max-height: 93vh;
 }
 
 #row::-webkit-scrollbar {
