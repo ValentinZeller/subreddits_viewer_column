@@ -154,3 +154,12 @@ a:hover {
 .list-group-flush {
     margin-bottom:5px;
 }
+
+blockquote {
+    background: #332c49;
+    padding-left: 2%;
+}
+
+blockquote p {
+    padding: 10px;
+}
