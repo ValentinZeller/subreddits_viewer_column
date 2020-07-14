@@ -157,7 +157,7 @@ a:hover {
 
 blockquote {
     background: #332c49;
-    padding-left: 2%;
+    display: inline-block;
 }
 
 blockquote p {

@@ -53,7 +53,7 @@ function fetchSubreddit(url,card) {
                     links +="<div class='thumb-self'></div>";
                 }
                 links += "<p href='https://www.reddit.com/" + childdata.permalink + "'>" + childdata.title + "</p></li>";
-                links += postInfo(childdata);
+                links += postInfo(childdata,false);
             }
             sub = document.createElement("ul");
             sub.setAttribute("class","list-group list-group-flush");
@@ -66,7 +66,19 @@ function fetchSubreddit(url,card) {
 function parseMDtoHTML(md) {
     var parser = new DOMParser;
     var dom = parser.parseFromString(md,"text/html");
-    return dom.body.textContent
+    return dom.body.textContent;
+}
+
+function playSoundAndVideo() {
+    video = document.getElementById('videoIN');
+    audio = document.getElementById('audioIN');
+    if (video.onplay) {
+        audio.currentTime = video.currentTime;
+        audio.play();
+    }
+    if (video.paused) {
+        audio.pause();
+    }
 }
 
 function fetchPosts(url,col,id) {
@@ -78,7 +90,9 @@ function fetchPosts(url,col,id) {
 
             if (!og.is_self) {
                 if (og.is_video) {
-                    var post = "<video width='50%' controls><source src='"+og.media.reddit_video.fallback_url+"'></source></video>";
+                    var post = "<video id='videoIN' width='50%' onplay='playSoundAndVideo();' onpause='playSoundAndVideo();' controls><source src='"+og.media.reddit_video.fallback_url+"'></source></video>";
+                    var audio = og.media.reddit_video.fallback_url.split("_")[0] + "_audio.mp4";
+                    post += "<audio id='audioIN'><source src='" + audio + "'></source></audio>";
                 } else {
                     if (og.domain == "youtube.com" || og.domain == "twitter.com") {
                         var post = parseMDtoHTML(og.media.oembed.html);
@@ -92,12 +106,12 @@ function fetchPosts(url,col,id) {
                 var post = parseMDtoHTML(og.selftext_html);
             }
             
-            posttitle = "<div class='card-header'><button type='button' class='btn btn-dark' onclick='hidePost(\""+ id +"\");'> X </button><a target='_blank' href='"+url+"' class='link-to-reddit' >Reddit</a>" +og.title +"</div>";
+            posttitle = "<div class='card-header'><button type='button' class='btn btn-dark' onclick='hidePost(\""+ id +"\");'> X </button><a target='_blank' href='"+url+"' class='link-to-reddit' >Link</a>" +og.title +"</div>";
 
             content = '';
             for (let i = 0;i < json[1].data.children.length;i++) {
                 var childdata = json[1].data.children[i].data;
-                content +=  "<li class='list-group-item bg-dark'>"+ postInfo(childdata) + parseMDtoHTML(childdata.body_html);
+                content +=  "<li class='list-group-item bg-dark'>"+ commentInfo(childdata) + parseMDtoHTML(childdata.body_html);
                 if (childdata.replies) {
                     content += fetchComments(childdata.replies.data.children,true);
                 }
@@ -105,15 +119,26 @@ function fetchPosts(url,col,id) {
             }
 
             content = "<ul class='list-group list-group-flush'>" + content + "</ul>";
-            col.innerHTML = "<div class='card bg-dark text-white rounded-0'>" + posttitle + "<div class='card-body'>"+ post + "</div>" + postInfo(og)  + content +  "</div>";
+            col.innerHTML = "<div class='card bg-dark text-white rounded-0'>" + posttitle + "<div class='card-body'>"+ post + "</div>" + postInfo(og,true)  + content +  "</div>";
         });
     }
 }
 
-function postInfo(data) {
-    info = "<p class='post-info'>"+ data.ups + " 🡅  - " + data.author;
-    if (data.num_comments) {
-        info+=" - " +data.num_comments+" comments </p>";
+function postInfo(data,inPost) {
+    info = "<p class='post-info'>"+ data.ups + " 🡅  - " + "<a class='user-link' href='https://www.reddit.com/user/"+ data.author +"'>" + data.author + "</a>";
+    if (inPost) {
+        if (data.author_flair_text) {
+            info += " | "+data.author_flair_text;
+        }
+    }
+    info+=" - " +data.num_comments+" comments </p>";
+    return info;
+}
+
+function commentInfo(data) {
+    info = "<p class='post-info'>"+ data.ups + " 🡅  - " + "<a class='user-link' href='https://www.reddit.com/user/"+ data.author +"'>" + data.author + "</a>";
+    if (data.author_flair_text) {
+        info += " | "+data.author_flair_text;
     }
     return info;
 }
@@ -128,7 +153,7 @@ function fetchComments(json,nest) {
         }
         
         for (let i =0;i < json.length;i++) {
-            comment+=postInfo(json[i].data);
+            comment+=commentInfo(json[i].data);
         let nested = !nest;
             comment += parseMDtoHTML(json[i].data.body_html);
             if (json[i].data.replies) {
