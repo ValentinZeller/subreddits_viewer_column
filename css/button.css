@@ -7,9 +7,9 @@
 }
 
 .sort {
-    margin-left: 5px;
-    font-size: 0.8em;
-    padding: 3%;
+    margin-left: 2px;
+    font-size: 1em;
+    padding: 2%;
     background-color: var(--sort);
 }
 
