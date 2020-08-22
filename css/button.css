@@ -1,0 +1,18 @@
+.btn-dark {
+    background:var(--btn);
+}
+
+.link-to-reddit {
+    margin: 0 10px;
+}
+
+.sort {
+    margin-left: 5px;
+    font-size: 0.8em;
+    padding: 3%;
+    background-color: var(--sort);
+}
+
+.dropdown-menu.show {
+    background-color: var(--btn);
+}

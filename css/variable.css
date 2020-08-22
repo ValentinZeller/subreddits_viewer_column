@@ -1,0 +1,10 @@
+:root {
+    --bg-dark : rgb(45, 51, 56);
+    --bg-light : rgb(62, 66, 70);
+    --title-hover : rgb(35, 39, 43);
+    --post-hover : rgb(72, 80, 88);
+    --scrollbar-bg : rgb(51, 51, 51);
+    --scrollbar : rgb(100, 100, 100);
+    --btn : rgb(45, 50, 55);
+    --sort : rgb(40,42,45);
+}

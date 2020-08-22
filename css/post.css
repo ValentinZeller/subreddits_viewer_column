@@ -1,0 +1,41 @@
+/* Quote */
+blockquote {
+    background: #332c49;
+    display: inline-block;
+}
+blockquote p {
+    padding: 10px;
+}
+
+/* Media embedded */
+.post-image,.youtube {
+    width: 50%;
+}
+
+/* Post information block */
+.post-info {
+    padding : 5px;
+    background : var(--bg-dark);
+}
+
+/* Nested post comments */
+.nested {
+    background: var(--bg-light) !important;
+}
+
+/* Thumbnail when no media content */
+.thumb-self {
+    background: url(../images/thumb_sprite.png) 0 0;
+    width:70px;
+    height:51px;
+    float: left;
+    margin-right: 6px;
+}
+
+/* Media thumbnail */
+.post-thumb {
+    width: 70px;
+    height: 70px;
+    float: left;
+    margin-right: 6px;
+}
