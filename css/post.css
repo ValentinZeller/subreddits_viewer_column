@@ -18,6 +18,12 @@ blockquote p {
     background : var(--bg-dark);
 }
 
+.post-sort {
+    background : var(--bg-dark);
+    padding : 5px;
+    font-size : 0.8em;
+}
+
 /* Nested post comments */
 .nested {
     background: var(--bg-light) !important;
@@ -38,4 +44,10 @@ blockquote p {
     height: 70px;
     float: left;
     margin-right: 6px;
+}
+
+.date {
+    font-size : 0.8em;
+    color : #dedede ;
+    padding-left: 4%;
 }

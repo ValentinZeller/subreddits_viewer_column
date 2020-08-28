@@ -9,10 +9,15 @@
 .sort {
     margin-left: 2px;
     font-size: 1em;
-    padding: 2%;
+    padding: 1%;
     background-color: var(--sort);
+}
+
+.card-header .sort {
+    padding: 2%;
 }
 
 .dropdown-menu.show {
     background-color: var(--btn);
 }
+

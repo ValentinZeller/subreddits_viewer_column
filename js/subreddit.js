@@ -146,7 +146,7 @@ function showPost(url,id) {
 
     // Get post content by his link
     posturl = "https://www.reddit.com"+url;
-    fetchPosts(posturl,col,id);
+    fetchPosts(posturl,col,id,"confidence");
 
     // When scrolling, add content
     col.addEventListener("scroll",function() {
@@ -193,47 +193,72 @@ function showSubs(id) {
     row.scrollLeft = document.getElementById(id).getBoundingClientRect().left ;
 }
 
+function updateSortingComments(url,id,sort) {
+    // Change the displayed comments corresponding to the sorting
+    // url : post id
+    // id : subreddit name
+    // sort : sorting methods
 
-function fetchPosts(url,col,id) {
+    col = document.getElementById("post-content");
+    col.firstElementChild.removeChild(col.firstElementChild.children[col.firstElementChild.children.length-1]);
+    fetchPosts(url,col,id,sort);
+}
+
+function fetchPosts(url,col,id,sort) {
     // Get post and comments
     // url : post id
     // col : column element
     // id : subreddit name
+    // sort : sorting methods
 
     if (url) {
-        fetch(url + '.json?limit=5000').then(function(response) {
+        fetch(url + '.json?limit=5000&sort='+ sort).then(function(response) {
             return response.json();
         }).then(function(json) {
-            var og = json[0].data.children[0].data;
-            var post;
 
-            if (!og.is_self) {
-                // If it's not a self text post
-                if (og.is_video) {
-                    // If it's a video
-                    // Creation of the video and audio content
-                    let video = og.media.reddit_video.fallback_url;
-                    post = "<video id='videoIN' width='50%' onplay='playSoundAndVideo();' onpause='playSoundAndVideo();' controls><source src='"+video+"'></source></video>";
-                    let audio = video.split("_")[0] + "_audio.mp4";
-                    post += "<audio id='audioIN'><source src='" + audio + "'></source></audio>";
-                } else {
-                    if (og.domain == "youtube.com" || og.domain == "twitter.com") {
-                        // If it's a youtube video or a tweet :
-                        // Creation of the embedded content
-                        post = parseMDtoHTML(og.media.oembed.html);
-                    }
-                    else {
-                        // It's an image
-                        post = "<a target='_blank' href='"+og.url+"'><img class='post-image' alt='"+og.url+"' src='"+ og.url +"'/></a>";
+            if (col.firstChild == null) { 
+                var og = json[0].data.children[0].data;
+                var post;
+
+                if (!og.is_self) {
+                    // If it's not a self text post
+                    if (og.is_video) {
+                        // If it's a video
+                        // Creation of the video and audio content
+                        let video = og.media.reddit_video.fallback_url;
+                        post = "<video id='videoIN' width='50%' onplay='playSoundAndVideo();' onpause='playSoundAndVideo();' controls><source src='"+video+"'></source></video>";
+                        let audio = video.split("_")[0] + "_audio.mp4";
+                        post += "<audio id='audioIN'><source src='" + audio + "'></source></audio>";
+                    } else {
+                        if (og.domain == "youtube.com" || og.domain == "twitter.com") {
+                            // If it's a youtube video or a tweet :
+                            // Creation of the embedded content
+                            post = parseMDtoHTML(og.media.oembed.html);
+                        }
+                        else {
+                            // It's an image
+                            post = "<a target='_blank' href='"+og.url+"'><img class='post-image' alt='"+og.url+"' src='"+ og.url +"'/></a>";
+                        }
                     }
                 }
+                else if (og.selftext_html) {
+                    // It's a selft text post
+                    post = parseMDtoHTML(og.selftext_html);
+                }
+                
+                posttitle = "<div class='card-header'><button type='button' class='btn btn-dark' onclick='hidePost(\""+ id +"\");'> X </button><a target='_blank' href='"+url+"' class='link-to-reddit' >Link</a>" +og.title +"</div>";
+
+                buttons = "<div class='sorting post-sort'><span> Sort by : </span>";
+                buttons += "<button class='btn btn-dark sort' onclick='updateSortingComments(\""+ url + "\",\"" + id +"\",\"confidence\");'>Best</button>";
+                buttons += "<button class='btn btn-dark sort' onclick='updateSortingComments(\""+ url + "\",\"" + id +"\",\"top\");'>Top</button>";
+                buttons += "<button class='btn btn-dark sort' onclick='updateSortingComments(\""+ url + "\",\"" + id +"\",\"new\");'>New</button>";
+                buttons += "<button class='btn btn-dark sort' onclick='updateSortingComments(\""+ url + "\",\"" + id +"\",\"controversial\");'>Controversial</button>";
+                buttons += "<button class='btn btn-dark sort' onclick='updateSortingComments(\""+ url + "\",\"" + id +"\",\"old\");'>Old</button>";
+                buttons += "<button class='btn btn-dark sort' onclick='updateSortingComments(\""+ url + "\",\"" + id +"\",\"qa\");'>Q&a</button>";
+                buttons += "</div>";
+
+                col.innerHTML = "<div class='card bg-dark text-white rounded-0'>" + posttitle + "<div class='card-body'>"+ post + "</div>" + buttons + postInfo(og,true,true)
             }
-            else if (og.selftext_html) {
-                // It's a selft text post
-                post = parseMDtoHTML(og.selftext_html);
-            }
-            
-            posttitle = "<div class='card-header'><button type='button' class='btn btn-dark' onclick='hidePost(\""+ id +"\");'> X </button><a target='_blank' href='"+url+"' class='link-to-reddit' >Link</a>" +og.title +"</div>";
 
             var content = '';
             for (let i = 0;i < json[1].data.children.length;i++) {
@@ -249,7 +274,7 @@ function fetchPosts(url,col,id) {
 
             // Append all
             content = "<ul class='list-group list-group-flush'>" + content + "</ul>";
-            col.innerHTML = "<div class='card bg-dark text-white rounded-0'>" + posttitle + "<div class='card-body'>"+ post + "</div>" + postInfo(og,true,true)  + content +  "</div>";
+            col.firstChild.innerHTML +=  content;
         });
     }
 }
@@ -267,8 +292,11 @@ function postInfo(data,inPost,haveComments) {
         }
     }
     if (haveComments) {
-        info+=" - " +data.num_comments+" comments </p>";
+        info+=" - " +data.num_comments+" comments";
     }
+    var date = new Date(0);
+    date.setUTCSeconds(data.created_utc);
+    info += "<br/><span class='date'>" + date.toLocaleDateString() + " - " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "</span></p>";
     return info;
 }
 
