@@ -226,6 +226,7 @@ function fetchPosts(url,col,id,sort) {
                         // If it's a video
                         // Creation of the video and audio content
                         let video = og.media.reddit_video.fallback_url;
+                        video = video.split("_")[0] + "_360.mp4"; //360p instead of 1080p
                         post = "<video id='videoIN' width='50%' onplay='playSoundAndVideo();' onpause='playSoundAndVideo();' controls><source src='"+video+"'></source></video>";
                         let audio = video.split("_")[0] + "_audio.mp4";
                         post += "<audio id='audioIN'><source src='" + audio + "'></source></audio>";
@@ -296,7 +297,18 @@ function postInfo(data,inPost,haveComments) {
     }
     var date = new Date(0);
     date.setUTCSeconds(data.created_utc);
-    info += "<br/><span class='date'>" + date.toLocaleDateString() + " - " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "</span></p>";
+
+    //Date display
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    month = month < 10 ? "0" + month : month;
+    let hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+    let day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+    let minute = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+    let second = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+    
+
+    info += "<br/><span class='date'>" + day + "/" + month + "/" + year + " - " + hour + ":" + minute + ":" + second + "</span></p>";
     return info;
 }
 
