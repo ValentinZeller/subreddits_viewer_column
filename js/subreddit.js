@@ -218,7 +218,7 @@ function fetchPosts(url,col,id,sort) {
 
             if (col.firstChild == null) { 
                 var og = json[0].data.children[0].data;
-                var post;
+                var post = "";
 
                 if (!og.is_self) {
                     // If it's not a self text post
@@ -237,8 +237,20 @@ function fetchPosts(url,col,id,sort) {
                             post = parseMDtoHTML(og.media.oembed.html);
                         }
                         else {
-                            // It's an image
-                            post = "<a target='_blank' href='"+og.url+"'><img class='post-image' alt='"+og.url+"' src='"+ og.url +"'/></a>";
+                            if (og.gallery_data) {
+                                // If it's a gallery :
+                                // Display each image of the gallery
+                                var keys = og.gallery_data.items;
+                                for(let i=0; i < keys.length;i++) {
+                                    link = og.media_metadata[keys[i].media_id].s.u;
+                                    link = link.replace(/&amp;/g,'&');
+                                    post += "<a target='_blank' href='"+link+"'><img class='post-image gallery' alt='"+link+"' src='"+ link +"'/></a>";
+                                }
+                            }
+                            else {
+                                // It's an image
+                                post = "<a target='_blank' href='"+og.url+"'><img class='post-image' alt='"+og.url+"' src='"+ og.url +"'/></a>";
+                            }
                         }
                     }
                 }

@@ -12,6 +12,11 @@ blockquote p {
     width: 50%;
 }
 
+/* Gallery */
+.gallery {
+    width: 25%;
+}
+
 /* Post information block */
 .post-info {
     padding : 5px;
