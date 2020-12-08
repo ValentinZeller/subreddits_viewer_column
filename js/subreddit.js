@@ -140,7 +140,7 @@ function showPost(url,id) {
 
     // Creation of the post column
     var col = document.createElement("div");
-    col.setAttribute("class","col-9");
+    col.setAttribute("class","col-8");
     col.setAttribute("id","post-content");
     row.appendChild(col);
 
@@ -190,7 +190,7 @@ function showSubs(id) {
     }
 
     // Scroll horizontaly
-    row.scrollLeft = document.getElementById(id).getBoundingClientRect().left ;
+    row.scrollLeft = document.getElementById(id).getBoundingClientRect().left -90 ;
 }
 
 function updateSortingComments(url,id,sort) {
@@ -259,15 +259,13 @@ function fetchPosts(url,col,id,sort) {
                     post = parseMDtoHTML(og.selftext_html);
                 }
                 
-                posttitle = "<div class='card-header'><button type='button' class='btn btn-dark' onclick='hidePost(\""+ id +"\");'> X </button><a target='_blank' href='"+url+"' class='link-to-reddit' >Link</a>" +og.title +"</div>";
+                posttitle = "<div class='card-header'><button type='button' class='btn btn-outline-danger' onclick='hidePost(\""+ id +"\");'>X</button><a target='_blank' href='"+url+"' class='link-to-reddit' >Link</a>" +og.title +"</div>";
 
                 buttons = "<div class='sorting post-sort'><span> Sort by : </span>";
-                buttons += "<button class='btn btn-dark sort' onclick='updateSortingComments(\""+ url + "\",\"" + id +"\",\"confidence\");'>Best</button>";
-                buttons += "<button class='btn btn-dark sort' onclick='updateSortingComments(\""+ url + "\",\"" + id +"\",\"top\");'>Top</button>";
-                buttons += "<button class='btn btn-dark sort' onclick='updateSortingComments(\""+ url + "\",\"" + id +"\",\"new\");'>New</button>";
-                buttons += "<button class='btn btn-dark sort' onclick='updateSortingComments(\""+ url + "\",\"" + id +"\",\"controversial\");'>Controversial</button>";
-                buttons += "<button class='btn btn-dark sort' onclick='updateSortingComments(\""+ url + "\",\"" + id +"\",\"old\");'>Old</button>";
-                buttons += "<button class='btn btn-dark sort' onclick='updateSortingComments(\""+ url + "\",\"" + id +"\",\"qa\");'>Q&a</button>";
+                let sortingArray = ["confidence","top","new","controversial","old","qa"];
+                for(i=0;i<sortingArray.length;i++) {
+                    buttons += "<button class='btn btn-dark sort' onclick='updateSortingComments(\""+ url + "\",\"" + id +"\",\""+ sortingArray[i] +"\");'>"+sortingArray[i] +"</button>";
+                }
                 buttons += "</div>";
 
                 col.innerHTML = "<div class='card bg-dark text-white rounded-0'>" + posttitle + "<div class='card-body'>"+ post + "</div>" + buttons + postInfo(og,true,true)
@@ -370,6 +368,12 @@ function backToTop(id) {
     col.scrollTop = 0;
 }
 
+function saveSettings() {
+    //Save the settings
+    changeColumnWidth(document.getElementById("columnwidth").value);
+    manageList();
+}
+
 function manageList() {
     // Update the subreddits displayed and saved the list as a cookie
     var value = document.getElementById("sublist").value;
@@ -378,6 +382,25 @@ function manageList() {
         refresh();
     }
 }
+
+function changeColumnWidth(value) {
+    // Change the width of the columns
+    // value : value of the new column's width
+    let max = 95;
+    if (document.getElementById("columnWidthStyle")) {
+        var sheet = document.getElementById("columnWidthStyle");
+        sheet.innerHTML = ".col-3 {max-width:"+value+"%;flex: 0 0 "+value+"%;} .col-8{max-width:"+(max-value)+"%;flex: 0 0 "+(max-value)+"%;}";
+    } else {
+        var sheet = document.createElement('style')
+        sheet.id = "columnWidthStyle";
+        sheet.innerHTML = ".col-3 {max-width:"+value+"%;flex: 0 0 "+value+"%;} .col-8{max-width:"+(max-value)+"%;flex:0 0 "+(max-value)+"%;}";
+        document.body.appendChild(sheet);;
+    }
+    if (value && value != getCookie("columnwidth")) {
+        setCookie("columnwidth",value,365);
+    }
+}
+
 
 function setCookie(cname, cvalue, exdays) {
     // Create or update a cookie
@@ -389,9 +412,9 @@ function setCookie(cname, cvalue, exdays) {
     d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
     var expires = "expires="+d.toUTCString();
     document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-  }
+}
   
-  function getCookie(cname) {
+function getCookie(cname) {
     // Get cookie value
     // cname : name of the cookie
 
@@ -407,4 +430,10 @@ function setCookie(cname, cvalue, exdays) {
       }
     }
     return "";
-  }
+}
+
+function updateTextInput(value) {
+    // Update text input to show range value
+    // value : value of the range input
+    document.getElementById('textInput').value=value+"%"; 
+}

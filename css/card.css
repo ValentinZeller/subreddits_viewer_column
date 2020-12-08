@@ -5,6 +5,7 @@
 
 .col-3 > .card > .list-group >.list-group-item:hover {
     background-color: var(--title-hover) !important;
+    cursor: pointer;
 }
 
 .card-header {

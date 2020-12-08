@@ -14,5 +14,31 @@ a:hover {
     text-decoration: none;
 }
 .navbar {
-    padding:5px;
+    height:97%;
+    border-right: 2px solid black;
+    position:fixed;
+    z-index:100;
+    padding:0.01%;
+}
+
+#navcol {
+    max-width: 4.5%;
+}
+
+.navbar img {
+    margin-left: 10%;
+}
+
+.modal-content {
+    background: var(--bg-dark);
+    color:white;
+}
+
+.col-8 {
+    max-width:70%;
+    flex: 0 0 70%;
+}
+
+.col-3 {
+    max-width: 24%;
 }

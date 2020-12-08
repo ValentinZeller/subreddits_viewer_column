@@ -2,7 +2,7 @@
 
 html {
     scrollbar-color: var(--scrollbar) var(--scrollbar-bg) ;
-    scrollbar-width: thin;
+    scrollbar-width: 8px;
 }
 
 html::-webkit-scrollbar {
@@ -20,7 +20,7 @@ html::-webkit-scrollbar-track {
 #row {
     overflow-x:auto;
     overflow-y: hidden;
-    max-height: 93vh;
+    max-height: 100vh;
 }
 
 #row::-webkit-scrollbar {
@@ -35,36 +35,29 @@ html::-webkit-scrollbar-track {
 
 /* Subreddit Column scrollbar */
 
-.col-9 {
+.col-8 {
     overflow-y: scroll;
     scrollbar-width: thin;
     scrollbar-color: var(--scrollbar) var(--scrollbar-bg) ;
 }
 
-.col-9::-webkit-scrollbar {
+.col-8::-webkit-scrollbar {
     width: 8px;
 }
-.col-9::-webkit-scrollbar-thumb {
+.col-8::-webkit-scrollbar-thumb {
     background-color: var(--scrollbar);
 }
-.col-9::-webkit-scrollbar-track {
+.col-8::-webkit-scrollbar-track {
     background-color: var(--scrollbar-bg);
 }
 
 /* Post Column scrollbar */
 
 .col-3 {
-    height: calc(91vh);
     overflow-y: scroll;
     overflow-x: hidden;
-    scrollbar-width: thin;
+    scrollbar-width: 8px;
     scrollbar-color: var(--scrollbar) var(--scrollbar-bg) ;
-}
-
-@media screen and (max-height : 750px) {
-    .col-3 {
-        height: calc(91vh);
-    }
 }
 
 .col-3::-webkit-scrollbar {
