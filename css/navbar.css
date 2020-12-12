@@ -1,0 +1,29 @@
+.navbar {
+    padding:0.01%;
+}
+
+#navcol, #navcol2 {
+    max-width: 50px;
+    flex : 1 0 8.3333%;
+}
+
+#navcol {
+    position:fixed;
+    z-index:1000;
+    border-right: 2px solid black;
+}
+
+.navbar img {
+    width:100%;
+}
+
+#refresh, #setting {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+}
+
+.modal-content {
+    background: var(--bg-dark);
+    color:white;
+}

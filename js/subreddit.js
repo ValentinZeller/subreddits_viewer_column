@@ -100,6 +100,7 @@ function fetchSubreddit(url,card,sort,time) {
             sub.setAttribute("class","list-group list-group-flush");
             sub.innerHTML = links;
             card.appendChild(sub);
+            
         });
     }
 }
@@ -377,8 +378,8 @@ function saveSettings() {
 function manageList() {
     // Update the subreddits displayed and saved the list as a cookie
     var value = document.getElementById("sublist").value;
-    if (value && value != getCookie("columns")) {
-        setCookie("columns",value,365);
+    if (value && value != localStorage.getItem("columns")) {
+        localStorage.setItem("columns",value,365);
         refresh();
     }
 }
@@ -396,8 +397,8 @@ function changeColumnWidth(value) {
         sheet.innerHTML = ".col-3 {max-width:"+value+"%;flex: 0 0 "+value+"%;} .col-8{max-width:"+(max-value)+"%;flex:0 0 "+(max-value)+"%;}";
         document.body.appendChild(sheet);;
     }
-    if (value && value != getCookie("columnwidth")) {
-        setCookie("columnwidth",value,365);
+    if (value && value != localStorage.getItem("columnwidth")) {
+        localStorage.setItem("columnwidth",value);
     }
 }
 

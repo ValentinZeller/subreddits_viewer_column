@@ -21,6 +21,7 @@ html::-webkit-scrollbar-track {
     overflow-x:auto;
     overflow-y: hidden;
     max-height: 100vh;
+    height:100vh;
 }
 
 #row::-webkit-scrollbar {
