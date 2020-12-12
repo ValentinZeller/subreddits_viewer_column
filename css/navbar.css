@@ -5,12 +5,12 @@
 #navcol, #navcol2 {
     max-width: 50px;
     flex : 1 0 8.3333%;
+    border-right: 2px solid black;
 }
 
 #navcol {
     position:fixed;
     z-index:1000;
-    border-right: 2px solid black;
 }
 
 .navbar img {

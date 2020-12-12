@@ -192,6 +192,7 @@ function showSubs(id) {
 
     // Scroll horizontaly
     row.scrollLeft = document.getElementById(id).getBoundingClientRect().left -90 ;
+    document.getElementById("navcol").style.height = document.getElementById("navcol2").getBoundingClientRect().height+"px";
 }
 
 function updateSortingComments(url,id,sort) {
