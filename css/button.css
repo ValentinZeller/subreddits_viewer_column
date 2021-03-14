@@ -21,3 +21,6 @@
     background-color: var(--btn);
 }
 
+.close-button {
+    float:right;
+}

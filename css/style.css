@@ -7,7 +7,7 @@
 
 body {
     background: rgb(52, 58, 64);
-    overflow-y: hidden;
+    /* overflow-y: hidden; */
 }
 
 a:hover {

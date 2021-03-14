@@ -42,6 +42,7 @@ function createColumns(columnlist) {
         cardheader.addEventListener("click",function() {
             backToTop(element);
         });
+
     });
 }
 
@@ -56,53 +57,69 @@ function updateSorting(url,sort,time) {
     fetchSubreddit(url,card,sort,time);
 }
 
-function fetchSubreddit(url,card,sort,time) {
+function fetchSubreddit(url,card,sort,time,after) {
     // Get subreddit posts
     // url : name of the subreddit
     // card : card element
     // sort : sorting method (new,hot,rising,top)
     // time : for the top sorting (hour,day,week,month,year,all)
-
+    
      if (url) {
-        fetch('https://www.reddit.com/r/' + url + '/' + sort + '/.json?limit=100&t=' + time).then(function(response) {
+        fetch('https://www.reddit.com/r/' + url + '/' + sort + '/.json?after=' + after + '&limit=25&t=' + time).then(function(response) {
             return response.json();
         }).then(function(json) {
-            // After fetching, creation of the content elements 
-            var links = ''; 
-            for (var i = 0; i < json.data.children.length; i++) {
-                // For each subreddit post
-                // Creation of the post element
-                let childdata = json.data.children[i].data;
-                links += "<li onclick='showPost(\""+ childdata.permalink +"\",\""+ url +"\");' class='list-group-item bg-dark' id='"+ childdata.id +"'>";
+            createSubreddit(url,card,json);
 
-                if (childdata.preview && childdata.selftext == "") {
-                 // if the post have a preview and have no text it's a spoiler or a media content
-                   if (childdata.thumbnail == "spoiler") {
-                    // Spoiler
-                        links +="<div class='thumb-self'></div>";
-                   } else {
-                    // Media content
-                        links+= "<img class='post-thumb' src='" + childdata.thumbnail + "'>";
-                   }
-                } else {
-                // Self text post
-                    links +="<div class='thumb-self'></div>";
+            //More post when scrolling
+            document.getElementById(url).addEventListener("scroll",function() {
+                col = document.getElementById(url);
+                if (col.scrollTop >= col.scrollHeight - col.offsetHeight) {
+                    fetchSubreddit(url,card,sort,time,json.data.after);
                 }
-
-                // Post title
-                links += "<p href='https://www.reddit.com/" + childdata.permalink + "'>" + childdata.title + "</p></li>";
-                // Post information (after content)
-                links += postInfo(childdata,false,true);
-            }
-
-            // List element to contain the posts and then append the list to the card
-            sub = document.createElement("ul");
-            sub.setAttribute("class","list-group list-group-flush");
-            sub.innerHTML = links;
-            card.appendChild(sub);
-            
+            });
         });
     }
+}
+
+function createSubreddit(url,card,json) {
+    // After fetching, creation of the content elements 
+    var links = ''; 
+    for (var i = 0; i < json.data.children.length; i++) {
+        // For each subreddit post
+        // Creation of the post element
+        let childdata = json.data.children[i].data;
+        links += "<li onclick='showPost(\""+ childdata.permalink +"\",\""+ url +"\");' class='list-group-item bg-dark' id='"+ childdata.id +"'>";
+
+        if (childdata.preview && childdata.selftext == "") {
+            // if the post have a preview and have no text it's a spoiler or a media content
+            if (childdata.thumbnail == "spoiler") {
+                // Spoiler
+                links +="<div class='thumb-self'></div>";
+            } else {
+                // Media content
+                links+= "<img class='post-thumb' src='" + childdata.thumbnail + "'>";
+            }
+        } else {
+            // Self text post
+            links +="<div class='thumb-self'></div>";
+        }
+
+        // Post title
+        links += "<p href='https://www.reddit.com/" + childdata.permalink + "'>" + childdata.title + "</p></li>";
+        // Post information (after content)
+        links += postInfo(childdata,false,true);
+    }
+
+    // List element to contain the posts and then append the list to the card
+    sub = document.getElementById("list-"+url);
+    if (sub == "" || sub == null) {
+        sub = document.createElement("ul");
+        sub.setAttribute("class","list-group list-group-flush");
+        sub.setAttribute("id","list-"+url);
+        //json.data.after
+    }
+    sub.innerHTML += links;
+    card.appendChild(sub);
 }
 
 function parseMDtoHTML(md) {
@@ -111,6 +128,38 @@ function parseMDtoHTML(md) {
     var parser = new DOMParser;
     var dom = parser.parseFromString(md,"text/html");
     return dom.body.textContent;
+}
+
+function postInfo(data,inPost,haveComments) {
+    // Get the post information
+    // data : json data of the post
+    // inPost : bool to know if it's in the post column or subreddit column or comment section
+    // haveComments : bool to know if there are comments
+
+    info = "<p class='post-info'>"+ data.ups + " 🡅  - " + "<a class='user-link' href='https://www.reddit.com/user/"+ data.author +"'>" + data.author + "</a>";
+    if (inPost) {
+        if (data.author_flair_text) {
+            info += " | "+data.author_flair_text;
+        }
+    }
+    if (haveComments) {
+        info+=" - " +data.num_comments+" comments";
+    }
+    var date = new Date(0);
+    date.setUTCSeconds(data.created_utc);
+
+    //Date display
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    month = month < 10 ? "0" + month : month;
+    let hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+    let day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+    let minute = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+    let second = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+    
+
+    info += "<br/><span class='date'>" + day + "/" + month + "/" + year + " - " + hour + ":" + minute + ":" + second + "</span></p>";
+    return info;
 }
 
 function playSoundAndVideo() {
@@ -134,6 +183,17 @@ function showPost(url,id) {
 
     hideSubs(id);
     var row = document.getElementById("row");
+
+    //Close button
+    if (!document.getElementById("close-post")) {
+        closebutton = document.createElement("button");
+        closebutton.setAttribute("class","btn btn-outline-danger close-button");
+        closebutton.setAttribute("id","close-post");
+        closebutton.setAttribute("onclick","hidePost(\""+ id +"\");");
+        closebutton.innerHTML = "<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='red' class='bi bi-arrow-return-left' viewBox='0 0 16 16'> <path fill-rule='evenodd' d='M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5z'/></svg>";
+        row.children[id].firstChild.firstChild.appendChild(closebutton);
+    }
+
     if (document.getElementById("post-content")) {
         // Remove the post column if there is already one opened
         row.removeChild(document.getElementById("post-content"));
@@ -148,15 +208,6 @@ function showPost(url,id) {
     // Get post content by his link
     posturl = "https://www.reddit.com"+url;
     fetchPosts(posturl,col,id,"confidence");
-
-    // When scrolling, add content
-    col.addEventListener("scroll",function() {
-        myDiv = document.getElementById("post-content");
-        if (myDiv.offsetHeight + myDiv.scrollTop >= myDiv.scrollHeight) {
-            //Load More
-        }
-
-    });
 }
 
 function hidePost(id) {
@@ -164,6 +215,7 @@ function hidePost(id) {
     // id : subreddit name
 
     var row = document.getElementById("row");
+    row.children[id].firstChild.firstChild.removeChild(row.children[id].firstChild.firstChild.lastChild);
     row.removeChild(document.getElementById("post-content"));
     showSubs(id);
     backToTop(id);
@@ -214,148 +266,125 @@ function fetchPosts(url,col,id,sort) {
     // sort : sorting methods
 
     if (url) {
-        fetch(url + '.json?limit=5000&sort='+ sort).then(function(response) {
+        fetch(url + '.json?limit=100&sort='+ sort).then(function(response) {
             return response.json();
-        }).then(function(json) {
+        }).then(async function(json) {
 
             if (col.firstChild == null) { 
-                var og = json[0].data.children[0].data;
-                var post = "";
-
-                if (!og.is_self) {
-                    // If it's not a self text post
-                    if (og.is_video) {
-                        // If it's a video
-                        // Creation of the video and audio content
-                        let video = og.media.reddit_video.fallback_url;
-                        video = video.split("_")[0] + "_360.mp4"; //360p instead of 1080p
-                        post = "<video id='videoIN' width='50%' onplay='playSoundAndVideo();' onpause='playSoundAndVideo();' controls><source src='"+video+"'></source></video>";
-                        let audio = video.split("_")[0] + "_audio.mp4";
-                        post += "<audio id='audioIN'><source src='" + audio + "'></source></audio>";
-                    } else {
-                        if (og.domain == "youtube.com" || og.domain == "twitter.com") {
-                            // If it's a youtube video or a tweet :
-                            // Creation of the embedded content
-                            post = parseMDtoHTML(og.media.oembed.html);
-                        }
-                        else {
-                            if (og.gallery_data) {
-                                // If it's a gallery :
-                                // Display each image of the gallery
-                                var keys = og.gallery_data.items;
-                                for(let i=0; i < keys.length;i++) {
-                                    link = og.media_metadata[keys[i].media_id].s.u;
-                                    link = link.replace(/&amp;/g,'&');
-                                    post += "<a target='_blank' href='"+link+"'><img class='post-image gallery' alt='"+link+"' src='"+ link +"'/></a>";
-                                }
-                            }
-                            else {
-                                // It's an image
-                                post = "<a target='_blank' href='"+og.url+"'><img class='post-image' alt='"+og.url+"' src='"+ og.url +"'/></a>";
-                            }
-                        }
-                    }
-                }
-                else if (og.selftext_html) {
-                    // It's a selft text post
-                    post = parseMDtoHTML(og.selftext_html);
-                }
-                
-                posttitle = "<div class='card-header'><button type='button' class='btn btn-outline-danger' onclick='hidePost(\""+ id +"\");'>X</button><a target='_blank' href='"+url+"' class='link-to-reddit' >Link</a>" +og.title +"</div>";
-
-                buttons = "<div class='sorting post-sort'><span> Sort by : </span>";
-                let sortingArray = ["confidence","top","new","controversial","old","qa"];
-                for(i=0;i<sortingArray.length;i++) {
-                    buttons += "<button class='btn btn-dark sort' onclick='updateSortingComments(\""+ url + "\",\"" + id +"\",\""+ sortingArray[i] +"\");'>"+sortingArray[i] +"</button>";
-                }
-                buttons += "</div>";
-
-                col.innerHTML = "<div class='card bg-dark text-white rounded-0'>" + posttitle + "<div class='card-body'>"+ post + "</div>" + buttons + postInfo(og,true,true)
+                col.innerHTML = postContent(json,id,url);
             }
 
-            var content = '';
+            let list = document.createElement("ul");
+            list.setAttribute("class","list-group list-group-flush");
+            col.firstChild.appendChild(list);
+
             for (let i = 0;i < json[1].data.children.length;i++) {
                 // For each comment
-                // Creation of comment container and get more comment
+                // Fetch comment data
+                // Create and append comment with all replies
                 let childdata = json[1].data.children[i].data;
-                content +=  "<li class='list-group-item bg-dark'>"+ postInfo(childdata,true,false) + parseMDtoHTML(childdata.body_html);
-                if (childdata.replies) {
-                    content += fetchComments(childdata.replies.data.children,true);
-                }
-                content+= "</li>";
-            }
 
-            // Append all
-            content = "<ul class='list-group list-group-flush'>" + content + "</ul>";
-            col.firstChild.innerHTML +=  content;
+                jsondata = await fetchComment(url,childdata.id);
+                
+                createComment(jsondata,url,true,list);
+            }
         });
     }
 }
 
-function postInfo(data,inPost,haveComments) {
-    // Get the post information
-    // data : json data of the post
-    // inPost : bool to know if it's in the post column or subreddit column or comment section
-    // haveComments : bool to know if there are comments
 
-    info = "<p class='post-info'>"+ data.ups + " 🡅  - " + "<a class='user-link' href='https://www.reddit.com/user/"+ data.author +"'>" + data.author + "</a>";
-    if (inPost) {
-        if (data.author_flair_text) {
-            info += " | "+data.author_flair_text;
+async function fetchComment(url,cid) {
+    // Fetch comment data
+    if (url && cid) {
+        let response = await fetch(url + cid + '.json');
+        let json = await response.json();
+        return json;
+    }
+}
+
+async function createComment(json,url,nest,parent) {
+    // Create and append comment with all replies
+    let childdata = json[1].data.children[0].data;
+
+    let li = document.createElement("li");
+
+    if (nest) {
+        li.setAttribute("class","list-group-item bg-dark nested");
+    } else {
+        li.setAttribute("class","list-group-item bg-dark");
+    }
+    li.innerHTML = postInfo(childdata,true,false) + parseMDtoHTML(childdata.body_html);
+    parent.appendChild(li);
+
+    if (childdata.replies) {
+        let ul = document.createElement("ul");
+        ul.setAttribute("class","list-group list-group-flush");
+        li.appendChild(ul);
+
+        for(let i=0;i < childdata.replies.data.children.length;i++){
+            nest = !nest;
+            let jsondata = await fetchComment(url,childdata.replies.data.children[i].data.id)
+            createComment(jsondata,url,nest,ul);
         }
     }
-    if (haveComments) {
-        info+=" - " +data.num_comments+" comments";
-    }
-    var date = new Date(0);
-    date.setUTCSeconds(data.created_utc);
-
-    //Date display
-    let year = date.getFullYear();
-    let month = date.getMonth() + 1;
-    month = month < 10 ? "0" + month : month;
-    let hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-    let day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-    let minute = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-    let second = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-    
-
-    info += "<br/><span class='date'>" + day + "/" + month + "/" + year + " - " + hour + ":" + minute + ":" + second + "</span></p>";
-    return info;
 }
 
 
-function fetchComments(json,nest) {
-    // Get comments
-    // json : post json data
-    // nest : bool to alternate comment nesting color
+function postContent(json,id,url) {
+    var og = json[0].data.children[0].data;
+    var post = "";
 
-    if (json.length > 0) {
-        var comment = "";
-        if (nest) {
-        // Set the right color depending of the nesting level
-            comment += "<li class='list-group-item bg-dark nested'>"
+    if (!og.is_self) {
+        // If it's not a self text post
+        if (og.is_video) {
+            // If it's a video
+            // Creation of the video and audio content
+            let video = og.media.reddit_video.fallback_url;
+            video = video.split("_")[0] + "_360.mp4"; //360p instead of 1080p
+            post = "<video id='videoIN' width='50%' onplay='playSoundAndVideo();' onpause='playSoundAndVideo();' controls><source src='"+video+"'></source></video>";
+            let audio = video.split("_")[0] + "_audio.mp4";
+            post += "<audio id='audioIN'><source src='" + audio + "'></source></audio>";
         } else {
-            comment += "<li class='list-group-item bg-dark'>"
-        }
-        
-        for (let i =0;i < json.length;i++) {
-            // For each comment :
-            // Creation of the comment with the comment information
-            comment+=postInfo(json[i].data,true,false);
-            let nested = !nest;
-            comment += parseMDtoHTML(json[i].data.body_html);
-            if (json[i].data.replies) {
-                comment += fetchComments(json[i].data.replies.data.children,nested);
+            if (og.domain == "youtube.com" || og.domain == "twitter.com") {
+                // If it's a youtube video or a tweet :
+                // Creation of the embedded content
+                post = parseMDtoHTML(og.media.oembed.html);
+            }   
+            else {
+                if (og.gallery_data) {
+                    // If it's a gallery :
+                    // Display each image of the gallery
+                    var keys = og.gallery_data.items;
+                    for(let i=0; i < keys.length;i++) {
+                        link = og.media_metadata[keys[i].media_id].s.u;
+                        link = link.replace(/&amp;/g,'&');
+                        post += "<a target='_blank' href='"+link+"'><img class='post-image gallery' alt='"+link+"' src='"+ link +"'/></a>";
+                    }
+                }   
+                else {
+                    // It's an image
+                    post = "<a target='_blank' href='"+og.url+"'><img class='post-image' alt='"+og.url+"' src='"+ og.url +"'/></a>";
+                }
             }
         }
-        comment += "</li>";
-        comment = "<ul class='list-group list-group-flush'>" + comment + "</ul>";
-        return comment;
-    } else {
-        return "";
     }
+    else if (og.selftext_html) {
+        // It's a selft text post
+        post = parseMDtoHTML(og.selftext_html);
+    }
+                
+    posttitle = "<div class='card-header'><a target='_blank' href='"+url+"' class='link-to-reddit' >Link</a>" +og.title +"</div>";
+
+    buttons = "<div class='sorting post-sort'><span> Sort by : </span>";
+    let sortingArray = ["confidence","top","new","controversial","old","qa"];
+    for(i=0;i<sortingArray.length;i++) {
+        buttons += "<button class='btn btn-dark sort' onclick='updateSortingComments(\""+ url + "\",\"" + id +"\",\""+ sortingArray[i] +"\");'>"+sortingArray[i] +"</button>";
+    }
+    buttons += "</div>";
+
+    return "<div class='card bg-dark text-white rounded-0'>" + posttitle + "<div class='card-body'>"+ post + "</div>" + buttons + postInfo(og,true,true);
 }
+
 
 function refresh() {
     // Refresh the page
