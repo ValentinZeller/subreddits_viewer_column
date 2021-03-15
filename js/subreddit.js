@@ -309,9 +309,9 @@ async function createComment(json,url,nest,parent) {
     let li = document.createElement("li");
 
     if (nest) {
-        li.setAttribute("class","list-group-item bg-dark nested");
+        li.setAttribute("class","comment list-group-item bg-dark nested");
     } else {
-        li.setAttribute("class","list-group-item bg-dark");
+        li.setAttribute("class","comment list-group-item bg-dark");
     }
     li.innerHTML = postInfo(childdata,true,false) + parseMDtoHTML(childdata.body_html);
     parent.appendChild(li);
@@ -320,13 +320,14 @@ async function createComment(json,url,nest,parent) {
         let ul = document.createElement("ul");
         ul.setAttribute("class","list-group list-group-flush");
         li.appendChild(ul);
+        nest = !nest;
 
         for(let i=0;i < childdata.replies.data.children.length;i++){
-            nest = !nest;
             let jsondata = await fetchComment(url,childdata.replies.data.children[i].data.id)
             createComment(jsondata,url,nest,ul);
         }
     }
+    
 }
 
 
