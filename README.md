@@ -10,8 +10,5 @@ At the top of the post view, there is a button to close the post and a link to t
 **You can't use this website as a complete alternative to reddit since you can't log, vote or post.
 
 Known issues :
-- Not showing all comments/replies
-- Limited number of post per subreddits
 - Lack of informations about posts/authors/comments
 - UI/UX need adjustments
-- Loading time too long when a post have many comments/replies
