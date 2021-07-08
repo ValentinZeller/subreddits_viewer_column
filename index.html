@@ -165,7 +165,7 @@
 
         //Tagify : manage subreddit list input
 
-      var input = document.querySelector('input[name=drag-sort]');
+      var input = document.getElementById('sublist');
       var tagify = new Tagify(input, {originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(',')});
 
       var arr = tagify.value.map(item => item.value).join(',');
