@@ -189,7 +189,7 @@
         document.getElementById("columnwidth").value = localStorage.getItem("columnwidth");
       }
       if (localStorage.getItem("columns")) {
-        createColumns(arr);
+        createColumns(arr.toString());
         document.getElementById("sublist").value = localStorage.getItem("columns");
       } else {
         //Prompt
