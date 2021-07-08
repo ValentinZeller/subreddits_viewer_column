@@ -19,6 +19,13 @@
     integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
     crossorigin="anonymous"></script>
 
+  //Tagify : manage subreddit list input
+  <script src="https://unpkg.com/@yaireo/tagify"></script>
+  <script src="https://unpkg.com/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+  <script src="https://unpkg.com/@yaireo/dragsort"></script>
+  <link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+
+
   <script src="js/subreddit.js"></script>
   <title>Subreddit Columns</title>
   <link rel="shortcut icon" type="image/png" href="./images/favicon.png" />
@@ -38,14 +45,14 @@
         <div class="modal-body">
           <div class="form-group">
             <label for="sublist">Subreddit list : </label>
-            <textarea class="form-control" id="sublist" placeholder="Liste"></textarea>
+            <input id="sublist" placeholder="Liste" name="drag-sort" />
 
           </div>
           <div class="form-group">
             <label for="columnwidth">Column Width : </label>
             <input type="range" class="form-control" id="columnwidth" value="24" min="0" max="50" step="1"
               onchange="updateTextInput(this.value);changeColumnWidth(this.value);" />
-            <input id="textInput" value="" readonly>
+            <input id="textInput" value="0" readonly>
           </div>
         </div>
         <div class="modal-footer">
@@ -155,16 +162,42 @@
       </nav>
     </div>
     <script>
+
+        //Tagify : manage subreddit list input
+
+      var input = document.querySelector('input[name=drag-sort]');
+      var tagify = new Tagify(input, {originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(',')});
+
+      var arr = tagify.value.map(item => item.value).join(',');
+
+      // using 3-party script "dragsort"
+      // https://github.com/yairEO/dragsort
+      var dragsort = new DragSort(tagify.DOM.scope, {
+      selector:'.'+tagify.settings.classNames.tag,
+      callbacks: {
+          dragEnd: onDragEnd
+      }
+      });
+
+      function onDragEnd(elm){
+        tagify.updateValueByDOMTags()
+      }
+
+
       if (localStorage.getItem("columnwidth")) {
         changeColumnWidth(localStorage.getItem("columnwidth"));
         document.getElementById("columnwidth").value = localStorage.getItem("columnwidth");
       }
       if (localStorage.getItem("columns")) {
-        createColumns(localStorage.getItem("columns"));
+        createColumns(arr);
         document.getElementById("sublist").value = localStorage.getItem("columns");
+      } else {
+        //Prompt
+        $('#settingModal').modal('show');
       }
       document.getElementById("navcol").style.height = document.getElementById("navcol2").getBoundingClientRect().height + "px";
-
+      updateTextInput(this.value);
+      
     </script>
   </div>
 </body>

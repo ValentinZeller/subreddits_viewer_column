@@ -7,43 +7,51 @@ function createColumns(columnlist) {
     
     columns = columnlist.split(",");
     columns.forEach(element => {
-        // For each subreddit :
-        // Creation of a column (col div)
-        var col = document.createElement("div");
-        col.setAttribute("class","col-3");
-        col.setAttribute("data-spy","scroll");
-        col.setAttribute("id",element);
-        col.setAttribute("data-target","#"+element);
-        col.setAttribute("data-offset","0");
 
         // Creation of a content block (card div)
-        var card = document.createElement("div");
-        card.setAttribute("class","card card-block text-white bg-dark mb-3 rounded-0");
-
-        // Creation of the header (sorting buttons)
-        var cardheader = document.createElement("div");
-        cardheader.setAttribute("class","card-header");
-        cardheader.innerHTML = element;
-        cardheader.innerHTML += " <button type='button' onclick='updateSorting(\""+element+"\",\"hot\",0);' class='btn btn-dark sort'>Hot</button>";
-        cardheader.innerHTML += " <button type='button' onclick='updateSorting(\""+element+"\",\"new\",0);' class='btn btn-dark sort'>New</button>";        
-        cardheader.innerHTML += " <button type='button' onclick='updateSorting(\""+element+"\",\"rising\",0);' class='btn btn-dark sort'>Rising</button>";        
-        cardheader.innerHTML += "<span class='dropdown'><button class='btn btn-dark dropdown-toggle sort' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>Top</button><div class='dropdown-menu' aria-labelledby='dropdownMenuButton'><button type='button' onclick='updateSorting(\""+element+"\",\"top\",\"hour\");' class='btn btn-dark sort'>Now</button><br/><button type='button' onclick='updateSorting(\""+element+"\",\"top\",\"day\");' class='btn btn-dark sort'>Today</button><br/><button type='button' onclick='updateSorting(\""+element+"\",\"top\",\"week\");' class='btn btn-dark sort'>This Week</button><br/><button type='button' onclick='updateSorting(\""+element+"\",\"top\",\"month\");' class='btn btn-dark sort'>This Month</button><br/><button type='button' onclick='updateSorting(\""+element+"\",\"top\",\"year\");' class='btn btn-dark sort'>This Year</button><br/><button type='button' onclick='updateSorting(\""+element+"\",\"top\",\"all\");' class='btn btn-dark sort'>All Time</button></div></span>";
-
-        // Creation of the body (content block)
-        var cardbody = document.createElement("div");
-        cardbody.setAttribute("class","card-body");
-        
-        card.appendChild(cardheader);
+        var card = createColumn(element);
         fetchSubreddit(element,card,'hot');
-        col.appendChild(card);
-        row.appendChild(col);
-
-        // Scroll the top of a column by clicking on the header
-        cardheader.addEventListener("click",function() {
-            backToTop(element);
-        });
-
     });
+}
+
+function createColumn(element) {
+    // Content block
+    var row = document.getElementById("row");
+
+    var col = document.createElement("div");
+    col.setAttribute("class","col-3");
+    col.setAttribute("data-spy","scroll");
+    col.setAttribute("id",element);
+    col.setAttribute("data-target","#"+element);
+    col.setAttribute("data-offset","0");
+
+    // Creation of a content block (card div)
+    var card = document.createElement("div");
+    card.setAttribute("class","card card-block text-white bg-dark mb-3 rounded-0");
+
+    // Creation of the header (sorting buttons)
+    var cardheader = document.createElement("div");
+    cardheader.setAttribute("class","card-header");
+    cardheader.innerHTML = "<span>"+element+"</span>";
+    cardheader.innerHTML += " <button type='button' onclick='updateSorting(\""+element+"\",\"hot\",0);' class='btn btn-dark sort'>Hot</button>";
+    cardheader.innerHTML += " <button type='button' onclick='updateSorting(\""+element+"\",\"new\",0);' class='btn btn-dark sort'>New</button>";        
+    cardheader.innerHTML += " <button type='button' onclick='updateSorting(\""+element+"\",\"rising\",0);' class='btn btn-dark sort'>Rising</button>";        
+    cardheader.innerHTML += "<span class='dropdown'><button class='btn btn-dark dropdown-toggle sort' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>Top</button><div class='dropdown-menu' aria-labelledby='dropdownMenuButton'><button type='button' onclick='updateSorting(\""+element+"\",\"top\",\"hour\");' class='btn btn-dark sort'>Now</button><br/><button type='button' onclick='updateSorting(\""+element+"\",\"top\",\"day\");' class='btn btn-dark sort'>Today</button><br/><button type='button' onclick='updateSorting(\""+element+"\",\"top\",\"week\");' class='btn btn-dark sort'>This Week</button><br/><button type='button' onclick='updateSorting(\""+element+"\",\"top\",\"month\");' class='btn btn-dark sort'>This Month</button><br/><button type='button' onclick='updateSorting(\""+element+"\",\"top\",\"year\");' class='btn btn-dark sort'>This Year</button><br/><button type='button' onclick='updateSorting(\""+element+"\",\"top\",\"all\");' class='btn btn-dark sort'>All Time</button></div></span>";
+
+    // Creation of the body (content block)
+    var cardbody = document.createElement("div");
+    cardbody.setAttribute("class","card-body");
+    
+    card.appendChild(cardheader);
+    col.appendChild(card);
+    row.appendChild(col);
+
+    // Scroll the top of a column by clicking on the header
+    cardheader.addEventListener("click",function() {
+        backToTop(element);
+    });
+
+    return card;
 }
 
 function updateSorting(url,sort,time) {
@@ -408,9 +416,10 @@ function saveSettings() {
 
 function manageList() {
     // Update the subreddits displayed and saved the list as a cookie
-    var value = document.getElementById("sublist").value;
-    if (value && value != localStorage.getItem("columns")) {
-        localStorage.setItem("columns",value,365);
+    var arr = tagify.value.map(item => item.value).join(',');
+
+    if (arr.toString() && arr.toString() != localStorage.getItem("columns")) {
+        localStorage.setItem("columns",arr.toString(),365);
         refresh();
     }
 }
@@ -467,5 +476,8 @@ function getCookie(cname) {
 function updateTextInput(value) {
     // Update text input to show range value
     // value : value of the range input
+    if (value === undefined) {
+        value = document.getElementById("columnwidth").value;
+    }
     document.getElementById('textInput').value=value+"%"; 
 }
