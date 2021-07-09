@@ -166,9 +166,9 @@
         //Tagify : manage subreddit list input
 
       var input = document.getElementById('sublist');
-      var tagify = new Tagify(input, {originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(',')});
+      var tagify = new Tagify(input);
 
-      var arr = tagify.value.map(item => item.value).join(',');
+      
 
       // using 3-party script "dragsort"
       // https://github.com/yairEO/dragsort
@@ -189,8 +189,10 @@
         document.getElementById("columnwidth").value = localStorage.getItem("columnwidth");
       }
       if (localStorage.getItem("columns")) {
-        createColumns(arr.toString());
+        tagify.addTags(localStorage.getItem("columns"));
         document.getElementById("sublist").value = localStorage.getItem("columns");
+        var arr = tagify.value.map(item => item.value).join(',');
+        createColumns(arr.toString());
       } else {
         //Prompt
         $('#settingModal').modal('show');
