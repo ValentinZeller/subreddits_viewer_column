@@ -178,8 +178,8 @@ function playSoundAndVideo() {
     if (video.onplay) {
         audio.currentTime = video.currentTime;
         audio.play();
-    }
-    if (video.paused) {
+    } else if (video.paused) {
+        audio.currentTime = video.currentTime;
         audio.pause();
     }
 }
@@ -252,7 +252,7 @@ function showSubs(id) {
 
     // Scroll horizontaly
     row.scrollLeft = document.getElementById(id).getBoundingClientRect().left -90 ;
-    document.getElementById("navcol").style.height = document.getElementById("navcol2").getBoundingClientRect().height+"px";
+    //document.getElementById("navcol").style.height = document.getElementById("navcol2").getBoundingClientRect().height+"px";
 }
 
 function updateSortingComments(url,id,sort) {
@@ -345,7 +345,46 @@ function postContent(json,id,url) {
 
     if (!og.is_self) {
         // If it's not a self text post
-        if (og.is_video) {
+        if (og.crosspost_parent_list) {
+            cross = og.crosspost_parent_list[0];
+
+            if (cross.is_video) {
+                let video = cross.media.reddit_video.fallback_url;
+                video = video.split("_")[0] + "_360.mp4"; //360p instead of 1080p
+                post = "<video id='videoIN' width='50%' onplay='playSoundAndVideo();' onpause='playSoundAndVideo();' controls><source src='"+video+"'></source></video>";
+                let audio = video.split("_")[0] + "_audio.mp4";
+                post += "<audio id='audioIN'><source src='" + audio + "'></source></audio>";
+            } else {
+                if (cross.domain == "youtube.com" || cross.domain == "twitter.com") {
+                    // If it's a youtube video or a tweet :
+                    // Creation of the embedded content
+                    post = parseMDtoHTML(cross.media.oembed.html);
+                }   
+                else {
+                    if (cross.gallery_data) {
+                        // If it's a gallery :
+                        // Display each image of the gallery
+                        var keys = cross.gallery_data.items;
+                        for(let i=0; i < keys.length;i++) {
+                            link = cross.media_metadata[keys[i].media_id].s.u;
+                            link = link.replace(/&amp;/g,'&');
+                            post += "<a target='_blank' href='"+link+"'><img class='post-image gallery' alt='"+link+"' src='"+ link +"'/></a>";
+                        }
+                    }   
+                    else {
+                        // It's an image
+                        post = "<a target='_blank' href='"+cross.url+"'><img class='post-image' alt='"+cross.url+"' src='"+ cross.url +"'/></a>";
+                    }
+                }
+            }
+
+            if (cross.selftext_html) {
+                post = parseMDtoHTML(cross.selftext_html);
+            }
+
+            post = "<div class='crosspost bg-dark'><div class='cross-header'>"+ cross.subreddit_name_prefixed +" : <a target='_blank' href='"+cross.url+"' class='link-to-reddit' >Link</a>"+ cross.title +"</div>"+ post + postInfo(cross,true,true) + "</div>";
+
+        } else if (og.is_video) {
             // If it's a video
             // Creation of the video and audio content
             let video = og.media.reddit_video.fallback_url;
@@ -442,36 +481,6 @@ function changeColumnWidth(value) {
     }
 }
 
-
-function setCookie(cname, cvalue, exdays) {
-    // Create or update a cookie
-    // cname : name of the cookie
-    // cvalue : value saved
-    // exdays : number of days before expiration
-
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-    var expires = "expires="+d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-}
-  
-function getCookie(cname) {
-    // Get cookie value
-    // cname : name of the cookie
-
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for(var i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) == ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) == 0) {
-        return c.substring(name.length, c.length);
-      }
-    }
-    return "";
-}
 
 function updateTextInput(value) {
     // Update text input to show range value

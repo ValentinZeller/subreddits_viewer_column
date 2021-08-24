@@ -62,3 +62,8 @@ blockquote p {
     background: var(--bg-light) !important;
     border-color: #343a40 !important;
 }
+
+.cross-header {
+    background : var(--bg-dark);
+    padding : 5px;
+}
