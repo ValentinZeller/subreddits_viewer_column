@@ -46,7 +46,7 @@
           <div class="form-group">
             <label for="sublist">Subreddit list : </label>
             <input id="sublist" placeholder="Liste" name="drag-sort" />
-
+            <button class="btn btn-primary" onclick="copyList()">Copy the list</button> 
           </div>
           <div class="form-group">
             <label for="columnwidth">Column Width : </label>
@@ -132,7 +132,6 @@
 
       var input = document.getElementById('sublist');
       var tagify = new Tagify(input);
-      
 
       // using 3-party script "dragsort"
       // https://github.com/yairEO/dragsort
@@ -163,6 +162,10 @@
       }
       //document.getElementById("navcol").style.height = document.getElementById("navcol2").getBoundingClientRect().height + "px";
       updateTextInput(this.value);
+
+      function copyList() {
+        navigator.clipboard.writeText(tagify.value.map(item => item.value).join(','));
+      }
       
     </script>
   </div>
