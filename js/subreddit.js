@@ -172,16 +172,28 @@ function postInfo(data,inPost,haveComments) {
 
 function playSoundAndVideo() {
     // Sync sound and video when playing or pausing a video
-
     video = document.getElementById('videoIN');
     audio = document.getElementById('audioIN');
-    if (video.onplay) {
-        audio.currentTime = video.currentTime;
-        audio.play();
-    } else if (video.paused) {
-        audio.currentTime = video.currentTime;
-        audio.pause();
+    video.currentTime = audio.currentTime;
+    if (audio.paused) {
+        video.pause();
+    } else {
+        video.play();
     }
+}
+
+function playVideoAndSound() {
+        // Sync sound and video when playing or pausing a video
+        video = document.getElementById('videoIN');
+        audio = document.getElementById('audioIN');
+        audio.currentTime = video.currentTime;
+        if (video.paused) {
+            audio.play();
+            video.play();
+        } else {
+            video.pause();
+            audio.pause();
+        }
 }
 
 function showPost(url,id) {
@@ -351,9 +363,10 @@ function postContent(json,id,url) {
             if (cross.is_video) {
                 let video = cross.media.reddit_video.fallback_url;
                 video = video.split("_")[0] + "_360.mp4"; //360p instead of 1080p
-                post = "<video id='videoIN' width='50%' onplay='playSoundAndVideo();' onpause='playSoundAndVideo();' controls><source src='"+video+"'></source></video>";
+                post = "<video id='videoIN' width='50%' onclick='playVideoAndSound();' ><source src='"+video+"'></source></video>";
                 let audio = video.split("_")[0] + "_audio.mp4";
-                post += "<audio id='audioIN'><source src='" + audio + "'></source></audio>";
+                post += "<br><audio id='audioIN' onplay='playSoundAndVideo();' onpause='playSoundAndVideo();' onseeking='playSoundAndVideo();' controls><source src='" + audio + "'></source></audio>";
+
             } else {
                 if (cross.domain == "youtube.com" || cross.domain == "twitter.com") {
                     // If it's a youtube video or a tweet :
@@ -389,9 +402,9 @@ function postContent(json,id,url) {
             // Creation of the video and audio content
             let video = og.media.reddit_video.fallback_url;
             video = video.split("_")[0] + "_360.mp4"; //360p instead of 1080p
-            post = "<video id='videoIN' width='50%' onplay='playSoundAndVideo();' onpause='playSoundAndVideo();' controls><source src='"+video+"'></source></video>";
+            post = "<video id='videoIN' width='50%' onclick='playVideoAndSound();' ><source src='"+video+"'></source></video>";
             let audio = video.split("_")[0] + "_audio.mp4";
-            post += "<audio id='audioIN'><source src='" + audio + "'></source></audio>";
+            post += "<br><audio id='audioIN' onplay='playSoundAndVideo();' onpause='playSoundAndVideo();' onseeking='playSoundAndVideo();' controls><source src='" + audio + "'></source></audio>";
         } else {
             if (og.domain == "youtube.com" || og.domain == "twitter.com") {
                 // If it's a youtube video or a tweet :

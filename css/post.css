@@ -67,3 +67,8 @@ blockquote p {
     background : var(--bg-dark);
     padding : 5px;
 }
+
+audio {
+    width: 50%;
+    margin-top: -4px;
+}
