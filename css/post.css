@@ -55,6 +55,7 @@ blockquote p {
 .comment {
     border-width: 0 0 8px !important;
     border-color: var(--bg-light) !important;
+    padding: 0.25rem 0.10rem 0.25rem 0.45rem;
 }
 
 /* Nested post comments */

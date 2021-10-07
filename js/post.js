@@ -65,10 +65,7 @@ function createPost(json,id,url) {
 }
 
 function postContent(og,isCrosspost) {
-    
-    if (og.selftext_html) {
-        post = parseMDtoHTML(cross.selftext_html);
-    }
+    post = "";
     if (og.is_video) {
         // If it's a video
         // Creation of the video and audio content
@@ -77,14 +74,16 @@ function postContent(og,isCrosspost) {
         post = "<video id='videoIN' width='50%' onclick='playVideoAndSound();' ><source src='"+video+"'></source></video>";
         let audio = video.split("_")[0] + "_audio.mp4";
         post += "<br><audio id='audioIN' onplay='playSoundAndVideo();' onpause='playSoundAndVideo();' onseeking='playSoundAndVideo();' controls><source src='" + audio + "'></source></audio>";
-    } else {
+    } else if (og.selftext_html != null) {
+        post = parseMDtoHTML(og.selftext_html);
+    }else {
         if (og.domain == "youtube.com" || og.domain == "twitter.com") {
             // If it's a youtube video or a tweet :
             // Creation of the embedded content
             post = parseMDtoHTML(og.media.oembed.html);
         }   
         else {
-            if (og.gallery_data) {
+            if (og.is_gallery) {
                 // If it's a gallery :
                 // Display each image of the gallery
                 var keys = og.gallery_data.items;
@@ -99,9 +98,6 @@ function postContent(og,isCrosspost) {
                 post = "<a target='_blank' href='"+og.url+"'><img class='post-image' alt='"+og.url+"' src='"+ og.url +"'/></a>";
             }
         }
-    }
-    if (og.selftext_html) {
-        post = parseMDtoHTML(og.selftext_html);
     }
 
     if (isCrosspost) {

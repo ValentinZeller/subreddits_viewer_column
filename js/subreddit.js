@@ -124,7 +124,13 @@ function parseMDtoHTML(md) {
 
     var parser = new DOMParser;
     var dom = parser.parseFromString(md,"text/html");
-    return dom.body.textContent;
+    var text = dom.body.textContent;
+    if (text.includes("/r/")) {
+        var re = /\/r\//g;
+        text = text.replace(re,'https://reddit.com/r/');
+    }
+    
+    return text;
 }
 
 

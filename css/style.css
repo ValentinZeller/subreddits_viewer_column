@@ -16,11 +16,10 @@ a:hover {
 }
 
 .col-8 {
-    max-width:70%;
-    flex: 0 0 70%;
+    max-width:76% !important;
+    flex: 1 0 76% !important;
 }
 
 .col-3 {
     max-width: 24%;
 }
-
