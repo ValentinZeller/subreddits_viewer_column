@@ -4,7 +4,7 @@ function createColumns(columnlist) {
 
     // Content block
     var row = document.getElementById("row");
-    
+
     columns = columnlist.split(",");
     columns.forEach(element => {
 
@@ -34,14 +34,14 @@ function createColumn(element) {
     cardheader.setAttribute("class","card-header");
     cardheader.innerHTML = "<span>"+element+"</span>";
     cardheader.innerHTML += " <button type='button' onclick='updateSorting(\""+element+"\",\"hot\",0);' class='btn btn-dark sort'>Hot</button>";
-    cardheader.innerHTML += " <button type='button' onclick='updateSorting(\""+element+"\",\"new\",0);' class='btn btn-dark sort'>New</button>";        
-    cardheader.innerHTML += " <button type='button' onclick='updateSorting(\""+element+"\",\"rising\",0);' class='btn btn-dark sort'>Rising</button>";        
+    cardheader.innerHTML += " <button type='button' onclick='updateSorting(\""+element+"\",\"new\",0);' class='btn btn-dark sort'>New</button>";
+    cardheader.innerHTML += " <button type='button' onclick='updateSorting(\""+element+"\",\"rising\",0);' class='btn btn-dark sort'>Rising</button>";
     cardheader.innerHTML += "<span class='dropdown'><button class='btn btn-dark dropdown-toggle sort' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>Top</button><div class='dropdown-menu' aria-labelledby='dropdownMenuButton'><button type='button' onclick='updateSorting(\""+element+"\",\"top\",\"hour\");' class='btn btn-dark sort'>Now</button><br/><button type='button' onclick='updateSorting(\""+element+"\",\"top\",\"day\");' class='btn btn-dark sort'>Today</button><br/><button type='button' onclick='updateSorting(\""+element+"\",\"top\",\"week\");' class='btn btn-dark sort'>This Week</button><br/><button type='button' onclick='updateSorting(\""+element+"\",\"top\",\"month\");' class='btn btn-dark sort'>This Month</button><br/><button type='button' onclick='updateSorting(\""+element+"\",\"top\",\"year\");' class='btn btn-dark sort'>This Year</button><br/><button type='button' onclick='updateSorting(\""+element+"\",\"top\",\"all\");' class='btn btn-dark sort'>All Time</button></div></span>";
 
     // Creation of the body (content block)
     var cardbody = document.createElement("div");
     cardbody.setAttribute("class","card-body");
-    
+
     card.appendChild(cardheader);
     col.appendChild(card);
     row.appendChild(col);
@@ -60,7 +60,7 @@ function fetchSubreddit(url,card,sort,time,after) {
     // card : card element
     // sort : sorting method (new,hot,rising,top)
     // time : for the top sorting (hour,day,week,month,year,all)
-    
+
      if (url) {
         fetch('https://www.reddit.com/r/' + url + '/' + sort + '/.json?after=' + after + '&limit=25&t=' + time).then(function(response) {
             return response.json();
@@ -79,8 +79,8 @@ function fetchSubreddit(url,card,sort,time,after) {
 }
 
 function createSubreddit(url,card,json) {
-    // After fetching, creation of the content elements 
-    var links = ''; 
+    // After fetching, creation of the content elements
+    var links = '';
     for (var i = 0; i < json.data.children.length; i++) {
         // For each subreddit post
         // Creation of the post element
@@ -122,15 +122,23 @@ function createSubreddit(url,card,json) {
 function parseMDtoHTML(md) {
     // Transform md content into html
 
-    var parser = new DOMParser;
-    var dom = parser.parseFromString(md,"text/html");
-    var text = dom.body.textContent;
-    if (text.includes("/r/")) {
-        var re = /\/r\//g;
-        text = text.replace(re,'https://reddit.com/r/');
+    let parser = new DOMParser;
+    let dom = parser.parseFromString(md,"text/html");
+    let text = dom.body.textContent;
+    let texts = text.split(' ');
+
+    for(let i=0; i < texts.length; i++) {
+      if (texts[i].includes('href="/r/')) {
+        regex = RegExp('href="/r/','g');
+        let replaced = texts[i].replace(regex,'href="https://www.reddit.com/r/');
+        texts[i] = replaced;
+      }
+      if (texts[i].includes('href="/u/')) {
+        regex = RegExp('href="/u/','g');
+        let replaced = texts[i].replace(regex,'href="https://www.reddit.com/u/');
+        texts[i] = replaced;
+      }
     }
-    
-    return text;
+
+    return texts.join(' ');
 }
-
-

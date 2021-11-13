@@ -10,7 +10,7 @@ function fetchPosts(url,col,id,sort) {
             return response.json();
         }).then(async function(json) {
 
-            if (col.firstChild == null) { 
+            if (col.firstChild == null) {
                 col.innerHTML = createPost(json,id,url);
             }
 
@@ -25,7 +25,7 @@ function fetchPosts(url,col,id,sort) {
                 let childdata = json[1].data.children[i].data;
 
                 jsondata = await fetchComment(url,childdata.id);
-                
+
                 createComment(jsondata,url,true,list);
             }
         });
@@ -51,7 +51,7 @@ function createPost(json,id,url) {
         // It's a selft text post
         post = parseMDtoHTML(og.selftext_html);
     }
-                
+
     posttitle = "<div class='card-header'><a target='_blank' href='"+url+"' class='link-to-reddit' >Link</a>" +og.title +"</div>";
 
     buttons = "<div class='sorting post-sort'><span> Sort by : </span>";
@@ -81,7 +81,7 @@ function postContent(og,isCrosspost) {
             // If it's a youtube video or a tweet :
             // Creation of the embedded content
             post = parseMDtoHTML(og.media.oembed.html);
-        }   
+        }
         else {
             if (og.is_gallery) {
                 // If it's a gallery :
@@ -93,9 +93,13 @@ function postContent(og,isCrosspost) {
                     post += "<a target='_blank' href='"+link+"'><img class='post-image gallery' alt='"+link+"' src='"+ link +"'/></a>";
                 }
             }
+            else if (og.post_hint == "image") {
+              // It's an image
+              post = "<a target='_blank' href='"+og.url+"'><img class='post-image' alt='"+og.url+"' src='"+ og.url +"'/></a>";
+            }
             else {
-                // It's an image
-                post = "<a target='_blank' href='"+og.url+"'><img class='post-image' alt='"+og.url+"' src='"+ og.url +"'/></a>";
+                // It's a link
+                post = "<a target='_blank' href='"+og.url+"'>" + og.url +"</a>";
             }
         }
     }
@@ -132,7 +136,7 @@ function postInfo(data,inPost,haveComments) {
     let day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
     let minute = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
     let second = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-    
+
 
     info += "<br/><span class='date'>" + day + "/" + month + "/" + year + " - " + hour + ":" + minute + ":" + second + "</span></p>";
     return info;
