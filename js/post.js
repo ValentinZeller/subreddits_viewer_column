@@ -66,7 +66,7 @@ function createPost(json,id,url) {
 
 function postContent(og,isCrosspost) {
     post = "";
-    if (og.is_video) {
+    if (og.is_video || og.domain == "v.redd.it") {
         // If it's a video
         // Creation of the video and audio content
         let video = og.media.reddit_video.fallback_url;
@@ -93,7 +93,7 @@ function postContent(og,isCrosspost) {
                     post += "<a target='_blank' href='"+link+"'><img class='post-image gallery' alt='"+link+"' src='"+ link +"'/></a>";
                 }
             }
-            else if (og.post_hint == "image") {
+            else if (og.post_hint == "image" || og.link_flair_text == "Image" || og.domain == "i.redd.it") {
               // It's an image
               post = "<a target='_blank' href='"+og.url+"'><img class='post-image' alt='"+og.url+"' src='"+ og.url +"'/></a>";
             }
