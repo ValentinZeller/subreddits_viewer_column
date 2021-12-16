@@ -20,10 +20,10 @@
     crossorigin="anonymous"></script>
 
   <!-- Tagify : manage subreddit list input -->
-  <script src="https://unpkg.com/@yaireo/tagify"></script>
-  <script src="https://unpkg.com/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
-  <script src="https://unpkg.com/@yaireo/dragsort"></script>
-  <link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+  <script src="https://unpkg.com/@yaireo/tagify@4.9.4"></script>
+  <script src="https://unpkg.com/@yaireo/tagify@4.9.4/dist/tagify.polyfills.min.js"></script>
+  <script src="https://unpkg.com/@yaireo/dragsort@1.2.0"></script>
+  <link href="https://unpkg.com/@yaireo/tagify@4.9.4/dist/tagify.css" rel="stylesheet" type="text/css" />
 
 
   <script src="js/subreddit.js"></script>
@@ -51,7 +51,7 @@
           <div class="form-group">
             <label for="sublist">Subreddit list : </label>
             <input id="sublist" placeholder="Liste" name="drag-sort" />
-            <button class="btn btn-primary" onclick="copyList()">Copy the list</button> 
+            <button class="btn btn-primary" onclick="copyList()">Copy the list</button>
           </div>
           <div class="form-group">
             <label for="columnwidth">Column Width : </label>
@@ -171,7 +171,7 @@
       function copyList() {
         navigator.clipboard.writeText(tagify.value.map(item => item.value).join(','));
       }
-      
+
     </script>
   </div>
 </body>

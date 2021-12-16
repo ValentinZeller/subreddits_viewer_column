@@ -50,6 +50,18 @@ function createPost(json,id,url) {
     else if (og.selftext_html) {
         // It's a selft text post
         post = parseMDtoHTML(og.selftext_html);
+        if (og.poll_data != null) {
+          post += "<ul class='list-group bg-dark'>";
+          post += "<p>Total vote : "+ og.poll_data.total_vote_count +"</p>";
+          for (const option of og.poll_data.options) {
+            post += "<li class='comment list-group bg-dark'>"+ option.text;
+            if (option.vote_count) {
+              post += " : "+option.vote_count;
+            }
+            post += "</li>";
+          }
+          post += "</ul>";
+        }
     }
 
     posttitle = "<div class='card-header'><a target='_blank' href='"+url+"' class='link-to-reddit' >Link</a>" +og.title +"</div>";
@@ -76,7 +88,7 @@ function postContent(og,isCrosspost) {
         post += "<br><audio id='audioIN' onplay='playSoundAndVideo();' onpause='playSoundAndVideo();' onseeking='playSoundAndVideo();' controls><source src='" + audio + "'></source></audio>";
     } else if (og.selftext_html != null) {
         post = parseMDtoHTML(og.selftext_html);
-    }else {
+    } else {
         if (og.domain == "youtube.com" || og.domain == "twitter.com") {
             // If it's a youtube video or a tweet :
             // Creation of the embedded content
