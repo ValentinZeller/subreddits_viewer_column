@@ -13,7 +13,7 @@
     height:100%;
 }
 
-#refresh, #setting, #about, .navbar img {
+.navbar img, .navbar button {
     width: 48px;
     height: 48px;
     padding: 0;

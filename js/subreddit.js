@@ -12,6 +12,12 @@ function createColumns(columnlist) {
         var card = createColumn(element);
         fetchSubreddit(element,card,'hot');
     });
+
+    recreateTooltips();
+}
+
+function recreateTooltips() {
+    $('[data-toggle="tooltip"]').tooltip('dispose').tooltip({boundary: 'window'});
 }
 
 function createColumn(element) {
@@ -51,6 +57,8 @@ function createColumn(element) {
         backToTop(element);
     });
 
+    createNavbarButton(element);
+
     return card;
 }
 
@@ -76,6 +84,31 @@ function fetchSubreddit(url,card,sort,time,after) {
             });
         });
     }
+}
+
+function fetchAbout(url) {
+  // Get subreddit about info
+  // url : name of the subreddit
+
+  if (url) {
+     fetch('https://www.reddit.com/r/' + url + '/about.json').then(function(response) {
+         return response.json();
+     }).then(function(json) {
+        let buttonScroll = document.getElementById('scroll-'+url);
+        let icon = document.createElement('img');
+
+        if (json.data.icon_img !== ''){
+          icon.setAttribute('src',json.data.icon_img);
+        } else if (json.data.community_icon !== '') {
+          let iconSrc = json.data.community_icon.split('?')[0];
+          icon.setAttribute('src', iconSrc);
+        } else {
+          buttonScroll.innerHTML = 'r/'+url[0].toUpperCase();
+        }
+
+        buttonScroll.appendChild(icon);
+     });
+ }
 }
 
 function createSubreddit(url,card,json) {
@@ -117,6 +150,28 @@ function createSubreddit(url,card,json) {
     }
     sub.innerHTML += links;
     card.appendChild(sub);
+}
+
+function createNavbarButton(id) {
+  //Create a button in the navbar to scroll to the subreddit
+  let navbar = document.getElementById('navbar');
+
+  let liScroll = document.createElement('li');
+  liScroll.setAttribute('data-toggle','tooltip');
+  liScroll.setAttribute('data-placement','right');
+  liScroll.setAttribute('title',id);
+
+  let buttonScroll = document.createElement('button');
+  buttonScroll.setAttribute('id','scroll-'+id);
+  buttonScroll.setAttribute('class','btn btn-dark');
+  buttonScroll.addEventListener("click",function() {
+      scrollToSub(id);
+  });
+
+  liScroll.appendChild(buttonScroll);
+  navbar.appendChild(liScroll);
+
+  fetchAbout(id);
 }
 
 function parseMDtoHTML(md) {

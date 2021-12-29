@@ -66,7 +66,6 @@ function showSubs(id) {
 
     // Scroll horizontaly
     row.scrollLeft = document.getElementById(id).getBoundingClientRect().left -90 ;
-    //document.getElementById("navcol").style.height = document.getElementById("navcol2").getBoundingClientRect().height+"px";
 }
 
 function refresh() {
@@ -80,4 +79,13 @@ function backToTop(id) {
 
     var col = document.getElementById(id);
     col.scrollTop = 0;
+}
+
+function scrollToSub(id) {
+  // Scroll horizontal to subreddit column
+  // id : subreddit name
+  let row = document.getElementById("row");
+  let target = document.getElementById(id);
+  row.scrollLeft = 0;
+  row.scrollLeft = target.getBoundingClientRect().left - 90 ;
 }

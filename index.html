@@ -68,7 +68,7 @@
     </div>
   </div>
 
-  <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby=aboutLabel" aria-hidden="true">
+  <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
@@ -97,8 +97,8 @@
         <a class="" href="#"><img src="./images/favicon2.png" alt="logo" /></a>
 
         <div class="" id="navbarSupportedContent">
-          <ul class="navbar-nav flex-column nav-fill mr-auto">
-            <li class="nav-item">
+          <ul id='navbar' class="navbar-nav flex-column nav-fill mr-auto">
+            <li data-toggle='tooltip' data-placement='right' title='Refresh' class="nav-item">
               <button class='btn btn-dark' id="refresh" onclick="refresh();">
                 <svg width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-arrow-clockwise" fill="currentColor"
                   xmlns="http://www.w3.org/2000/svg">
@@ -108,7 +108,7 @@
                 </svg>
               </button>
             </li>
-            <li>
+            <li data-toggle='tooltip' data-placement='right' title='Settings'>
               <button type="button" class="btn btn-dark" id="setting" data-toggle="modal" data-target="#settingModal">
                 <svg width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-gear-fill" fill="currentColor"
                   xmlns="http://www.w3.org/2000/svg">
@@ -117,7 +117,7 @@
                 </svg>
               </button>
             </li>
-            <li>
+            <li data-toggle='tooltip' data-placement='right' title='About'>
               <button type="button" class="btn btn-dark" id="about" data-toggle="modal" data-target="#aboutModal">
                 <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
                   <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
@@ -132,8 +132,10 @@
 
     <div class="row flex-nowrap no-gutters" id="row">
     <script>
-
-        //Tagify : manage subreddit list input
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+      })
+      //Tagify : manage subreddit list input
 
       var input = document.getElementById('sublist');
       var tagify = new Tagify(input);
