@@ -117,7 +117,7 @@ function postContent(og,isCrosspost) {
     }
 
     if (isCrosspost) {
-        post = "<div class='crosspost bg-dark'><div class='cross-header'>"+ og.subreddit_name_prefixed +" : <a target='_blank' href='"+og.url+"' class='link-to-reddit' >Link</a>"+ og.title +"</div>"+ post + postInfo(og,true,true) + "</div>";
+        post = "<div class='crosspost bg-dark'><div class='cross-header'>"+ og.subreddit_name_prefixed +" : <a target='_blank' href='https://www.reddit.com"+og.permalink+"' class='link-to-reddit' >Link</a>"+ og.title +"</div>"+ post + postInfo(og,true,true) + "</div>";
     }
     return post;
 }

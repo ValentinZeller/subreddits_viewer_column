@@ -57,7 +57,7 @@ function createColumn(element) {
         backToTop(element);
     });
 
-    createNavbarButton(element);
+    fetchAbout(element);
 
     return card;
 }
@@ -94,21 +94,9 @@ function fetchAbout(url) {
      fetch('https://www.reddit.com/r/' + url + '/about.json').then(function(response) {
          return response.json();
      }).then(function(json) {
-        let buttonScroll = document.getElementById('scroll-'+url);
-        let icon = document.createElement('img');
-
-        if (json.data.icon_img !== ''){
-          icon.setAttribute('src',json.data.icon_img);
-        } else if (json.data.community_icon !== '') {
-          let iconSrc = json.data.community_icon.split('?')[0];
-          icon.setAttribute('src', iconSrc);
-        } else {
-          buttonScroll.innerHTML = 'r/'+url[0].toUpperCase();
-        }
-
-        buttonScroll.appendChild(icon);
+       createNavbarButton(url, json);
      });
- }
+   }
 }
 
 function createSubreddit(url,card,json) {
@@ -152,7 +140,7 @@ function createSubreddit(url,card,json) {
     card.appendChild(sub);
 }
 
-function createNavbarButton(id) {
+function createNavbarButton(id, json) {
   //Create a button in the navbar to scroll to the subreddit
   let navbar = document.getElementById('navbar');
 
@@ -168,10 +156,20 @@ function createNavbarButton(id) {
       scrollToSub(id);
   });
 
+  let icon = document.createElement('img');
+
+  if (json.data.icon_img !== ''){
+    icon.setAttribute('src',json.data.icon_img);
+  } else if (json.data.community_icon !== '') {
+    let iconSrc = json.data.community_icon.split('?')[0];
+    icon.setAttribute('src', iconSrc);
+  } else {
+    buttonScroll.innerHTML = 'r/'+id[0].toUpperCase();
+  }
+
+  buttonScroll.appendChild(icon);
   liScroll.appendChild(buttonScroll);
   navbar.appendChild(liScroll);
-
-  fetchAbout(id);
 }
 
 function parseMDtoHTML(md) {
