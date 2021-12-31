@@ -1,4 +1,4 @@
-async function createColumns(columnlist) {
+function createColumns(columnlist) {
     // Create all the subreddit columns
     // columnlist : List of subreddits
 
@@ -10,7 +10,7 @@ async function createColumns(columnlist) {
         // Creation of a content block (card div)
         var card = createColumn(element);
         fetchSubreddit(element,card,'hot');
-        await fetchAbout(element);
+            createNavbarButton(element);
     }
 
     recreateTooltips();
@@ -84,15 +84,28 @@ function fetchSubreddit(url,card,sort,time,after) {
     }
 }
 
-async function fetchAbout(url) {
+function fetchAbout(url) {
   // Get subreddit about info
   // url : name of the subreddit
 
   if (url) {
-     let response = await fetch('https://www.reddit.com/r/' + url + '/about.json');
-     let json = await response.json();
-     createNavbarButton(url, json);
-   }
+    fetch('https://www.reddit.com/r/' + url + '/about.json').then(function(response){
+      return response.json();
+    }).then(function(json){
+      let buttonScroll = document.getElementById('scroll-'+url);
+      let icon = document.createElement('img');
+      if (json.data.icon_img !== ''){
+        icon.setAttribute('src',json.data.icon_img);
+      } else if (json.data.community_icon !== '') {
+        let iconSrc = json.data.community_icon.split('?')[0];
+        icon.setAttribute('src', iconSrc);
+      } else {
+        buttonScroll.innerHTML = 'r/'+url[0].toUpperCase();
+      }
+
+      buttonScroll.appendChild(icon);
+    });
+  }
 }
 
 function createSubreddit(url,card,json) {
@@ -134,9 +147,10 @@ function createSubreddit(url,card,json) {
     }
     sub.innerHTML += links;
     card.appendChild(sub);
+    fetchAbout(url);
 }
 
-function createNavbarButton(id, json) {
+function createNavbarButton(id) {
   //Create a button in the navbar to scroll to the subreddit
   let navbar = document.getElementById('navbar');
 
@@ -152,18 +166,6 @@ function createNavbarButton(id, json) {
       scrollToSub(id);
   });
 
-  let icon = document.createElement('img');
-
-  if (json.data.icon_img !== ''){
-    icon.setAttribute('src',json.data.icon_img);
-  } else if (json.data.community_icon !== '') {
-    let iconSrc = json.data.community_icon.split('?')[0];
-    icon.setAttribute('src', iconSrc);
-  } else {
-    buttonScroll.innerHTML = 'r/'+id[0].toUpperCase();
-  }
-
-  buttonScroll.appendChild(icon);
   liScroll.appendChild(buttonScroll);
   navbar.appendChild(liScroll);
 }

@@ -102,12 +102,14 @@ function postContent(og,isCrosspost) {
                 for(let i=0; i < keys.length;i++) {
                     link = og.media_metadata[keys[i].media_id].s.u;
                     link = link.replace(/&amp;/g,'&');
-                    post += "<a target='_blank' href='"+link+"'><img class='post-image gallery' alt='"+link+"' src='"+ link +"'/></a>";
+                    post += "<img data-toggle='modal' data-target='#img-"+i+"' class='post-image gallery' alt='"+link+"' src='"+ link +"'/>";
+                    post += "<div class='modal fade' id='img-"+i+"'><div class='modal-dialog img-zoom'><div class='modal-content'><img data-toggle='modal' tabindex='-1'  alt='"+link+"' src='"+ link +"'/></div></div></div>";
                 }
             }
             else if (og.post_hint == "image" || og.link_flair_text == "Image" || og.domain == "i.redd.it") {
               // It's an image
-              post = "<a target='_blank' href='"+og.url+"'><img class='post-image' alt='"+og.url+"' src='"+ og.url +"'/></a>";
+              post = "<img data-toggle='modal' data-target='#"+og.name+"' class='post-image' alt='"+og.url+"' src='"+ og.url +"'/>";
+              post += "<div class='modal fade' id='"+og.name+"'><div class='modal-dialog img-zoom'><div class='modal-content'><img data-toggle='modal' tabindex='-1'  alt='"+og.url+"' src='"+ og.url +"'/></div></div></div>";
             }
             else {
                 // It's a link
