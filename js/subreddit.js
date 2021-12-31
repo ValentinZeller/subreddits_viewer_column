@@ -1,4 +1,4 @@
-function createColumns(columnlist) {
+async function createColumns(columnlist) {
     // Create all the subreddit columns
     // columnlist : List of subreddits
 
@@ -6,12 +6,12 @@ function createColumns(columnlist) {
     var row = document.getElementById("row");
 
     columns = columnlist.split(",");
-    columns.forEach(element => {
-
+    for (let element of columns) {
         // Creation of a content block (card div)
         var card = createColumn(element);
         fetchSubreddit(element,card,'hot');
-    });
+        await fetchAbout(element);
+    }
 
     recreateTooltips();
 }
@@ -57,8 +57,6 @@ function createColumn(element) {
         backToTop(element);
     });
 
-    fetchAbout(element);
-
     return card;
 }
 
@@ -86,16 +84,14 @@ function fetchSubreddit(url,card,sort,time,after) {
     }
 }
 
-function fetchAbout(url) {
+async function fetchAbout(url) {
   // Get subreddit about info
   // url : name of the subreddit
 
   if (url) {
-     fetch('https://www.reddit.com/r/' + url + '/about.json').then(function(response) {
-         return response.json();
-     }).then(function(json) {
-       createNavbarButton(url, json);
-     });
+     let response = await fetch('https://www.reddit.com/r/' + url + '/about.json');
+     let json = await response.json();
+     createNavbarButton(url, json);
    }
 }
 
