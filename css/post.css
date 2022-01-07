@@ -69,11 +69,6 @@ blockquote p {
     padding : 5px;
 }
 
-audio {
-    width: 50%;
-    margin-top: -4px;
-}
-
 .img-zoom {
   margin: 5.5rem;
   max-width: none;

@@ -12,6 +12,7 @@ function fetchPosts(url,col,id,sort) {
 
             if (col.firstChild == null) {
                 col.innerHTML = createPost(json,id,url);
+                videojs(document.querySelector('.video-js'));
             }
 
             let list = document.createElement("ul");
@@ -80,12 +81,9 @@ function postContent(og,isCrosspost) {
     post = "";
     if (og.is_video || og.domain == "v.redd.it") {
         // If it's a video
-        // Creation of the video and audio content
-        let video = og.media.reddit_video.fallback_url;
-        video = video.split("_")[0] + "_360.mp4"; //360p instead of 1080p
-        post = "<video id='videoIN' width='50%' onclick='playVideoAndSound();' ><source src='"+video+"'></source></video>";
-        let audio = video.split("_")[0] + "_audio.mp4";
-        post += "<br><audio id='audioIN' onplay='playSoundAndVideo();' onpause='playSoundAndVideo();' onseeking='playSoundAndVideo();' controls><source src='" + audio + "'></source></audio>";
+        // Creation of the video
+        let video = og.media.reddit_video.hls_url
+        post = "<video class='video-js' controls id='videoIN' class='vjs-default-skin' width='"+og.media.reddit_video.width+"'><source src='"+video+"'></source></video>";
     } else if (og.selftext_html != null) {
         post = parseMDtoHTML(og.selftext_html);
     } else {
@@ -106,8 +104,11 @@ function postContent(og,isCrosspost) {
                     post += "<div class='modal fade' id='img-"+i+"'><div class='modal-dialog img-zoom'><div class='modal-content'><img data-toggle='modal' tabindex='-1'  alt='"+link+"' src='"+ link +"'/></div></div></div>";
                 }
             }
-            else if (og.post_hint == "image" || og.link_flair_text == "Image" || og.domain == "i.redd.it") {
+            else if (og.post_hint == "image" || og.link_flair_text == "Image" || og.domain == "i.redd.it" || og.domain == 'i.imgur.com') {
               // It's an image
+              if(og.url.includes('.gifv')) {
+                og.url = og.url.slice(0, -1);
+              }
               post = "<img data-toggle='modal' data-target='#"+og.name+"' class='post-image' alt='"+og.url+"' src='"+ og.url +"'/>";
               post += "<div class='modal fade' id='"+og.name+"'><div class='modal-dialog img-zoom'><div class='modal-content'><img data-toggle='modal' tabindex='-1'  alt='"+og.url+"' src='"+ og.url +"'/></div></div></div>";
             }
