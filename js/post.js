@@ -12,7 +12,9 @@ function fetchPosts(url,col,id,sort) {
 
             if (col.firstChild == null) {
                 col.innerHTML = createPost(json,id,url);
-                videojs(document.querySelector('.video-js'));
+                if (document.querySelector('.video-js')) {
+                  videojs(document.querySelector('.video-js'));
+                }
             }
 
             let list = document.createElement("ul");
@@ -83,7 +85,7 @@ function postContent(og,isCrosspost) {
         // If it's a video
         // Creation of the video
         let video = og.media.reddit_video.hls_url
-        post = "<video class='video-js' controls id='videoIN' class='vjs-default-skin' width='"+og.media.reddit_video.width+"'><source src='"+video+"'></source></video>";
+        post = "<video class='video-js' controls id='videoIN' class='vjs-default-skin' width='720' height='480'><source src='"+video+"'></source></video>";
     } else if (og.selftext_html != null) {
         post = parseMDtoHTML(og.selftext_html);
     } else {
