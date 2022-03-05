@@ -81,7 +81,7 @@ function createPost(json,id,url) {
 
 function postContent(og,isCrosspost) {
     post = "";
-    if (og.is_video || og.domain == "v.redd.it") {
+    if (og.is_video || og.domain == "v.redd.it" ) {
         // If it's a video
         // Creation of the video
         let video = og.media.reddit_video.hls_url
@@ -89,7 +89,7 @@ function postContent(og,isCrosspost) {
     } else if (og.selftext_html != null) {
         post = parseMDtoHTML(og.selftext_html);
     } else {
-        if (og.domain == "youtube.com" || og.domain == "twitter.com") {
+        if (og.domain == "youtube.com" || og.domain == "twitter.com" || og.domain == 'gfycat.com') {
             // If it's a youtube video or a tweet :
             // Creation of the embedded content
             post = parseMDtoHTML(og.media.oembed.html);
@@ -106,7 +106,7 @@ function postContent(og,isCrosspost) {
                     post += "<div class='modal fade' id='img-"+i+"'><div class='modal-dialog img-zoom'><div class='modal-content'><img data-toggle='modal' tabindex='-1'  alt='"+link+"' src='"+ link +"'/></div></div></div>";
                 }
             }
-            else if (og.post_hint == "image" || og.link_flair_text == "Image" || og.domain == "i.redd.it" || og.domain == 'i.imgur.com') {
+            else if (og.post_hint == "image" || og.link_flair_text == "Image" || og.domain == "i.redd.it" || og.domain == 'i.imgur.com' ) {
               // It's an image
               if(og.url.includes('.gifv')) {
                 og.url = og.url.slice(0, -1);

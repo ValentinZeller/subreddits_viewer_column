@@ -152,12 +152,13 @@ function createSubreddit(url,card,json) {
 
 function createNavbarButton(id) {
   //Create a button in the navbar to scroll to the subreddit
-  let navbar = document.getElementById('navbar');
+  let navbar = document.getElementById('navscroll');
 
   let liScroll = document.createElement('li');
   liScroll.setAttribute('data-toggle','tooltip');
   liScroll.setAttribute('data-placement','right');
   liScroll.setAttribute('title',id);
+  liScroll.setAttribute('class','subIcon');
 
   let buttonScroll = document.createElement('button');
   buttonScroll.setAttribute('id','scroll-'+id);
